@@ -1,0 +1,9 @@
+ignored = ["github.com/go-home-io/server/*"]
+
+[[constraint]]
+  name = "github.com/amimof/huego"
+  version = "1.0.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true

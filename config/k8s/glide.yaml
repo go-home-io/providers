@@ -1,0 +1,11 @@
+package: github.com/go-home-io/providers/config/k8s
+ignore:
+- github.com/go-home-io/server
+import:
+- package: k8s.io/apimachinery
+  subpackages:
+  - pkg/apis/meta/v1
+- package: k8s.io/client-go
+  subpackages:
+  - kubernetes
+  - rest

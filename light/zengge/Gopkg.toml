@@ -1,0 +1,9 @@
+ignored = ["github.com/go-home-io/server/*"]
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/vikstrous/zengge-lightcontrol"
+
+[prune]
+  go-tests = true
+  unused-packages = true
