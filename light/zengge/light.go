@@ -99,11 +99,11 @@ func (z *ZenggeLight) Update() (*device.LightState, error) {
 	defer transport.Close()
 	controller := &control.Controller{Transport: transport}
 	internalState, err := controller.GetState()
-	z.updateState(internalState)
 	if err != nil {
 		return nil, err
 	}
 
+	z.updateState(internalState)
 	return z.State, nil
 }
 
