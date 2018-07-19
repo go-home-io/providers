@@ -20,8 +20,8 @@ const (
 	logicAnd
 )
 
-// SpecEntry has data about single device this trigger has to watch.
-type SpecEntry struct {
+// DeviceEntry has data about single device this trigger has to watch.
+type DeviceEntry struct {
 	Device   string         `yaml:"device" validate:"required,gt=0"`
 	Property enums.Property `yaml:"property" validate:"required"`
 	State    interface{}    `yaml:"state"`
@@ -34,9 +34,10 @@ type SpecEntry struct {
 type Settings struct {
 	sync.Mutex
 
-	Delay int          `yaml:"delay" validate:"gte=0"`
-	Spec  []*SpecEntry `yaml:"spec" validate:"required,gt=0"`
-	Logic string       `yaml:"logic" validate:"oneof=or and" default:"or"`
+	Delay       int            `yaml:"delay" validate:"gte=0"`
+	Devices     []*DeviceEntry `yaml:"devices" validate:"required,gt=0"`
+	Logic       string         `yaml:"logic" validate:"oneof=or and" default:"or"`
+	Pessimistic bool           `yaml:"pessimistic" default:"-"`
 
 	decisionLogic logic
 }
@@ -45,7 +46,7 @@ type Settings struct {
 func (s *Settings) Validate() error {
 	s.decisionLogic, _ = logicString(s.Logic)
 
-	for _, v := range s.Spec {
+	for _, v := range s.Devices {
 		var err error
 		v.deviceRegexp, err = glob.Compile(v.Device)
 		if err != nil {

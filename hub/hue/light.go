@@ -259,22 +259,26 @@ func (h *HueLight) changeBrightnessOverTime(percent device.GradualBrightness) {
 // Updates device state.
 func (h *HueLight) setState(state *huego.State) {
 	h.spec = &device.Spec{
-		UpdatePeriod:      h.sharedObjects.settings.pollingInterval,
-		SupportedCommands: []enums.Command{enums.CmdOn, enums.CmdOff, enums.CmdToggle, enums.CmdSetBrightness},
+		UpdatePeriod:        h.sharedObjects.settings.pollingInterval,
+		SupportedCommands:   []enums.Command{enums.CmdOn, enums.CmdOff, enums.CmdToggle, enums.CmdSetBrightness},
+		SupportedProperties: []enums.Property{enums.PropOn, enums.PropBrightness},
 	}
 
 	if state.Hue > 0 {
 		h.spec.SupportedCommands = append(h.spec.SupportedCommands, enums.CmdSetColor)
+		h.spec.SupportedProperties = append(h.spec.SupportedProperties, enums.PropColor)
 	}
 
 	if h.IsGroup {
 		h.spec.SupportedCommands = append(h.spec.SupportedCommands, enums.CmdSetScene)
+		h.spec.SupportedProperties = append(h.spec.SupportedProperties, enums.PropScenes)
 	}
 
 	h.processUpdate(state)
 
 	if h.state.TransitionTime > 0 {
 		h.spec.SupportedCommands = append(h.spec.SupportedCommands, enums.CmdSetTransitionTime)
+		h.spec.SupportedProperties = append(h.spec.SupportedProperties, enums.PropTransitionTime)
 	}
 }
 

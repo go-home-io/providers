@@ -29,6 +29,7 @@ func (z *ZenggeLight) Init(data *device.InitDataDevice) error {
 	z.spec = &device.Spec{
 		UpdatePeriod:           z.Settings.pollingInterval,
 		SupportedCommands:      []enums.Command{enums.CmdOn, enums.CmdOff, enums.CmdToggle, enums.CmdSetColor},
+		SupportedProperties:    []enums.Property{enums.PropOn, enums.PropColor},
 		PostCommandDeferUpdate: 500 * time.Millisecond,
 	}
 

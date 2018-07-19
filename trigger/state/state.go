@@ -42,6 +42,10 @@ func (t *StateTrigger) Init(data *trigger.InitDataTrigger) error {
 // Internal cycle of events
 func (t *StateTrigger) internalCycle() {
 	for msg := range t.deviceUpdates {
+		if msg.FirstSeen && !t.Settings.Pessimistic {
+			continue
+		}
+
 		go t.react(msg)
 	}
 }
@@ -51,7 +55,7 @@ func (t *StateTrigger) react(msg *common.MsgDeviceUpdate) {
 	t.Settings.Lock()
 	defer t.Settings.Unlock()
 
-	for _, v := range t.Settings.Spec {
+	for _, v := range t.Settings.Devices {
 		if !v.deviceRegexp.Match(msg.ID) {
 			continue
 		}
@@ -79,14 +83,14 @@ func (t *StateTrigger) react(msg *common.MsgDeviceUpdate) {
 }
 
 // Makes a decision whether need to trigger.
-func (t *StateTrigger) makeDecision(msg *TriggerDeviceStateUpdate, spec *SpecEntry) {
+func (t *StateTrigger) makeDecision(msg *TriggerDeviceStateUpdate, spec *DeviceEntry) {
 	if t.Settings.decisionLogic == logicOr {
 		go t.triggerOr(msg, spec)
 		return
 	}
 
 	if t.Settings.decisionLogic == logicAnd {
-		for _, v := range t.Settings.Spec {
+		for _, v := range t.Settings.Devices {
 			if !v.triggered {
 				return
 			}
@@ -97,7 +101,7 @@ func (t *StateTrigger) makeDecision(msg *TriggerDeviceStateUpdate, spec *SpecEnt
 }
 
 // Checks conditions if trigger's logic is "OR".
-func (t *StateTrigger) triggerOr(msg *TriggerDeviceStateUpdate, spec *SpecEntry) {
+func (t *StateTrigger) triggerOr(msg *TriggerDeviceStateUpdate, spec *DeviceEntry) {
 	if t.Settings.Delay > 0 {
 		time.Sleep(time.Duration(t.Settings.Delay) * time.Second)
 		if !spec.triggered {
@@ -116,7 +120,7 @@ func (t *StateTrigger) triggerAnd(msg *TriggerDeviceStateUpdate) {
 		time.Sleep(time.Duration(t.Settings.Delay) * time.Second)
 		t.Settings.Lock()
 		defer t.Settings.Unlock()
-		for _, v := range t.Settings.Spec {
+		for _, v := range t.Settings.Devices {
 			if !v.triggered {
 				return
 			}

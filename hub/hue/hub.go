@@ -51,8 +51,9 @@ func (h *HueHub) Init(data *device.InitDataDevice) error {
 	h.sharedObjects.scenes = make(map[string]hueScene)
 	h.state = &device.HubState{}
 	h.spec = &device.Spec{
-		UpdatePeriod:      h.sharedObjects.settings.pollingInterval,
-		SupportedCommands: []enums.Command{},
+		UpdatePeriod:        h.sharedObjects.settings.pollingInterval,
+		SupportedCommands:   []enums.Command{},
+		SupportedProperties: []enums.Property{enums.PropNumDevices},
 	}
 	return nil
 }
