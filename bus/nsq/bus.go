@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"sync"
 	"time"
 
 	"github.com/go-home-io/server/plugins/bus"
@@ -16,6 +17,8 @@ const (
 
 // NsqBus describes NSQ bus plugin implementation.
 type NsqBus struct {
+	sync.Mutex
+
 	config    *nsq.Config
 	producer  *nsq.Producer
 	logger    common.ILoggerProvider
@@ -23,8 +26,8 @@ type NsqBus struct {
 	consumers map[string]*nsq.Consumer
 }
 
-// Init makes an attempt to create a new NSQ producer.
-func (b *NsqBus) Init(data bus.InitDataServiceBus) error {
+// Init makes an attempt to setup a new NSQ producer.
+func (b *NsqBus) Init(data *bus.InitDataServiceBus) error {
 	b.config = nsq.NewConfig()
 	b.config.ClientID = data.NodeID
 	b.config.DialTimeout = time.Duration(b.Settings.Timeout) * time.Second
@@ -45,6 +48,9 @@ func (b *NsqBus) Init(data bus.InitDataServiceBus) error {
 
 // Subscribe makes an attempts to subscribe to NSQ topic.
 func (b *NsqBus) Subscribe(channel string, queue chan bus.RawMessage) error {
+	b.Lock()
+	defer b.Unlock()
+
 	if _, ok := b.consumers[channel]; ok {
 		b.logger.Warn("Trying to subscribe to the same channel twice",
 			common.LogChannelToken, channel)
@@ -58,6 +64,13 @@ func (b *NsqBus) Subscribe(channel string, queue chan bus.RawMessage) error {
 	}
 
 	q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
+		b.Lock()
+		defer b.Unlock()
+		_, ok := b.consumers[channel]
+		if !ok {
+			return nil
+		}
+
 		msg := bus.RawMessage{
 			Body: make([]byte, len(message.Body)),
 		}
@@ -91,11 +104,15 @@ func (b *NsqBus) Subscribe(channel string, queue chan bus.RawMessage) error {
 
 // Unsubscribe removes channel subscription.
 func (b *NsqBus) Unsubscribe(channel string) {
+	b.Lock()
+	defer b.Unlock()
+
 	if ch, ok := b.consumers[channel]; !ok {
 		b.logger.Warn("Trying to unsubscribe from the channel without been subscribed",
 			common.LogChannelToken, channel)
 	} else {
 		ch.Stop()
+		delete(b.consumers, channel)
 	}
 }
 
