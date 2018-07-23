@@ -43,15 +43,16 @@ func (t *StateTrigger) Init(data *trigger.InitDataTrigger) error {
 func (t *StateTrigger) internalCycle() {
 	for msg := range t.deviceUpdates {
 		if msg.FirstSeen && !t.Settings.Pessimistic {
+			go t.react(msg, true)
 			continue
 		}
 
-		go t.react(msg)
+		go t.react(msg, false)
 	}
 }
 
 // Reacts on device update msg.
-func (t *StateTrigger) react(msg *common.MsgDeviceUpdate) {
+func (t *StateTrigger) react(msg *common.MsgDeviceUpdate, noTrigger bool) {
 	t.Settings.Lock()
 	defer t.Settings.Unlock()
 
@@ -68,6 +69,10 @@ func (t *StateTrigger) react(msg *common.MsgDeviceUpdate) {
 			v.triggered = reflect.DeepEqual(s, v.State)
 			if !v.triggered {
 				continue
+			}
+
+			if noTrigger {
+				break
 			}
 
 			msg := &TriggerDeviceStateUpdate{

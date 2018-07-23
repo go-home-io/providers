@@ -19,6 +19,17 @@ type commandMapper struct {
 	expression helpers.ITemplateExpression
 }
 
+// Mapper for properties.
+type propertyMapper struct {
+	commandMapper
+	property enums.Property
+}
+
+// IGenericDevice defines reconnect feature for the device.
+type IGenericDevice interface {
+	ReConnect()
+}
+
 // Generic MQTT device
 type mqttDevice struct {
 	mutex sync.Mutex
@@ -26,7 +37,7 @@ type mqttDevice struct {
 	topicsPrefix string
 	state        interface{}
 	updateChan   chan *device.StateUpdateData
-	topics       []string
+	topics       map[string]*propertyMapper
 	settings     *DeviceSettings
 	spec         *device.Spec
 	parser       helpers.ITemplateParser
@@ -81,9 +92,21 @@ func (m *mqttDevice) handleUpdates(payload []byte, expression helpers.ITemplateE
 	m.forceUpdate()
 }
 
+// Re-connecting to broker.
+func (m *mqttDevice) ReConnect() {
+	for _, v := range m.topics {
+		topic := v.topic
+		expr := v.expression
+		prop := v.property
+		m.client.Subscribe(topic, m.settings.Qos, func(client mqtt.Client, message mqtt.Message) {
+			go m.handleUpdates(message.Payload(), expr, prop)
+		})
+	}
+}
+
 // Subscribes to an MQTT topic.
 func (m *mqttDevice) subscribe() {
-	m.topics = make([]string, 0)
+	m.topics = make(map[string]*propertyMapper)
 	m.commands = make(map[enums.Command]*commandMapper)
 	m.spec = &device.Spec{
 		SupportedCommands:   make([]enums.Command, 0),
@@ -103,7 +126,14 @@ func (m *mqttDevice) subscribe() {
 			go m.handleUpdates(message.Payload(), expr, prop)
 		})
 
-		m.topics = append(m.topics, topic)
+		m.topics[topic] = &propertyMapper{
+			commandMapper: commandMapper{
+				topic:      topic,
+				expression: expr,
+			},
+			property: v.Property,
+		}
+
 		m.spec.SupportedProperties = append(m.spec.SupportedProperties, v.Property)
 	}
 
@@ -158,7 +188,7 @@ func (m *mqttDevice) Init(data *device.InitDataDevice) error {
 
 // Unload handles un-subscribing from MQTT broker.
 func (m *mqttDevice) Unload() {
-	for _, v := range m.commands {
+	for _, v := range m.topics {
 		m.client.Unsubscribe(v.topic)
 	}
 }

@@ -40,7 +40,23 @@ func (m *MQTTHub) Init(data *device.InitDataDevice) error {
 		SetClientID(m.Settings.ClientID).
 		AddBroker(fmt.Sprintf("tcp://%s", m.Settings.Broker)).
 		SetUsername(m.Settings.Login).
-		SetPassword(m.Settings.Password)
+		SetPassword(m.Settings.Password).
+		SetAutoReconnect(true).
+		SetMaxReconnectInterval(1 * time.Second).
+		SetPingTimeout(1 * time.Second)
+
+	firstConnect := true
+
+	options.OnConnect = func(client mqtt.Client) {
+		if firstConnect {
+			firstConnect = false
+			return
+		}
+
+		for _, v := range m.devices {
+			v.(IGenericDevice).ReConnect()
+		}
+	}
 
 	m.client = mqtt.NewClient(options)
 	return nil
