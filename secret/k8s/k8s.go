@@ -26,7 +26,7 @@ type K8SSecretsProvider struct {
 func (s *K8SSecretsProvider) Init(data *secret.InitDataSecret) error {
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		data.Logger.Error("Failed to read k8s config", err)
+		data.Logger.Error("Failed to read k8s secret", err)
 		return err
 	}
 
