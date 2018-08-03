@@ -81,19 +81,10 @@ func (b *NsqBus) Subscribe(channel string, queue chan bus.RawMessage) error {
 
 	q.SetLogger(&nsqLogger{logger: b.logger}, nsqLogLevel)
 
-	if b.Settings.LookupAddress != "" {
-		err := q.ConnectToNSQLookupd(b.Settings.LookupAddress)
-		if err != nil {
-			b.logger.Error("Failed to connect to nsq lookup while subscribing", err,
-				common.LogChannelToken, channel)
-			return err
-		}
-	} else {
-		err := q.ConnectToNSQD(b.Settings.ServerAddress)
-		if err != nil {
-			b.logger.Error("Failed to connect to nsq while subscribing", err, common.LogChannelToken, channel)
-			return err
-		}
+	err = q.ConnectToNSQD(b.Settings.ServerAddress)
+	if err != nil {
+		b.logger.Error("Failed to connect to nsq while subscribing", err, common.LogChannelToken, channel)
+		return err
 	}
 
 	b.logger.Debug("Successfully subscribed to nsq channel", common.LogChannelToken, channel)
