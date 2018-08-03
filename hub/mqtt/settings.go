@@ -10,7 +10,7 @@ type Settings struct {
 	Login    string            `yaml:"login"`
 	Password string            `yaml:"password"`
 	ClientID string            `yaml:"clientID" validate:"required" default:"gohome"`
-	Broker   string            `yaml:"broker" validate:"required,ipv4port"`
+	Broker   string            `yaml:"broker" validate:"required"`
 }
 
 // Validate performs settings validation.

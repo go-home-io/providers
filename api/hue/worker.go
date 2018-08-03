@@ -29,7 +29,7 @@ func (e *HueEmulator) initWorker(*api.InitDataAPI) error {
 	port, _ := strconv.Atoi(parts[1])
 
 	l, err := net.ListenTCP("tcp4", &net.TCPAddr{
-		IP:   net.ParseIP(parts[0]),
+		IP:   net.ParseIP("0.0.0.0"),
 		Port: port,
 	})
 
