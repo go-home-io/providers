@@ -1,13 +1,13 @@
 package main
 
 import (
+	"context"
 	"strings"
 
+	"github.com/ericchiang/k8s"
+	"github.com/ericchiang/k8s/apis/core/v1"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/config"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 )
 
 // K8SConfigProvider descries k8s-config-map configs plugin implementation.
@@ -15,19 +15,13 @@ type K8SConfigProvider struct {
 	ConfigMapName string
 	Namespace     string
 
-	logger       common.ILoggerProvider
-	k8sClientSet *kubernetes.Clientset
+	logger    common.ILoggerProvider
+	k8sClient *k8s.Client
 }
 
 // Init makes an attempt to connect to k8s API server and get a config-map.
 func (c *K8SConfigProvider) Init(data *config.InitDataConfig) error {
-	cfg, err := rest.InClusterConfig()
-	if err != nil {
-		data.Logger.Error("Failed to read k8s config", err)
-		return err
-	}
-
-	clientSet, err := kubernetes.NewForConfig(cfg)
+	client, err := k8s.NewInClusterClient()
 	if err != nil {
 		data.Logger.Error("Failed to connect to k8s API server", err)
 		return err
@@ -50,14 +44,16 @@ func (c *K8SConfigProvider) Init(data *config.InitDataConfig) error {
 		c.ConfigMapName = parts[1]
 	}
 
-	c.k8sClientSet = clientSet
+	c.k8sClient = client
 	c.logger = data.Logger
 	return nil
 }
 
 // Load makes an attempt to read stings data from a k8s config map.
 func (c *K8SConfigProvider) Load() chan []byte {
-	cm, err := c.k8sClientSet.CoreV1().ConfigMaps(c.Namespace).Get(c.ConfigMapName, v1.GetOptions{})
+	var cm v1.ConfigMap
+
+	err := c.k8sClient.Get(context.Background(), c.Namespace, c.ConfigMapName, &cm)
 	if err != nil {
 		c.logger.Error("Failed to get config map", err, "config-map", c.ConfigMapName, "namespace", c.Namespace)
 		return nil
