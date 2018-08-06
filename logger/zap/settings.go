@@ -6,7 +6,6 @@ type Settings struct {
 		Regular []string `yaml:"regular" validate:"unique,min=1"`
 		Error   []string `yaml:"error" validate:"unique,min=1"`
 	} `yaml:"targets" validate:"required"`
-	LogLevel string `yaml:"level"`
 }
 
 // Validate settings.

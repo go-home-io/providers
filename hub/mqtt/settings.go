@@ -40,7 +40,7 @@ type CommandMapper struct {
 type DeviceSettings struct {
 	Type        enums.DeviceType  `yaml:"type" validate:"required"`
 	Name        string            `yaml:"name" validate:"required"`
-	Qos         byte              `yaml:"qos" validate:"required,gt=0,lte=4" default:"2"`
+	Qos         byte              `yaml:"qos" validate:"required,gte=0,lte=2" default:"2"`
 	Retained    bool              `yaml:"retained" default:"false"`
 	Pessimistic bool              `yaml:"pessimistic" default:"-"`
 	Properties  []*PropertyMapper `yaml:"properties"`

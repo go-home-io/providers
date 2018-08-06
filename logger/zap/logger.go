@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strings"
 	"sync"
 
 	"github.com/go-home-io/server/plugins/logger"
@@ -17,16 +16,15 @@ type ZapLogger struct {
 }
 
 // Init performs initial logger setup.
-func (l *ZapLogger) Init(*logger.InitDataLogger) error {
-	logLevel := zap.InfoLevel
-	switch strings.ToLower(l.Settings.LogLevel) {
-	case "debug":
+func (l *ZapLogger) Init(data *logger.InitDataLogger) error {
+	var logLevel zapcore.Level
+	switch data.Level {
+	case logger.Debug:
 		logLevel = zap.DebugLevel
-	case "warn", "warning":
-		logLevel = zap.WarnLevel
-	case "error":
+	case logger.Error:
 		logLevel = zap.ErrorLevel
-	case "info":
+	case logger.Warning:
+		logLevel = zap.WarnLevel
 	default:
 		logLevel = zap.InfoLevel
 	}

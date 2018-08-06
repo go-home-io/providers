@@ -56,7 +56,7 @@ func (s *Settings) Validate() error {
 }
 
 // List of supported device types.
-var supportedTypes = []enums.DeviceType{enums.DevLight, enums.DevSwitch}
+var supportedTypes = []enums.DeviceType{enums.DevLight, enums.DevSwitch, enums.DevGroup}
 
 // List of supported device properties.
 var supportedProperties = []enums.Property{enums.PropOn, enums.PropBrightness}
