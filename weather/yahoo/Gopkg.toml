@@ -1,0 +1,13 @@
+ignored = ["github.com/go-home-io/server/*"]
+
+[[constraint]]
+  name = "github.com/koron/go-dproxy"
+  version = "1.2.1"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/sndnvaps/yahoo_weather_api"
+
+[prune]
+  go-tests = true
+  unused-packages = true
