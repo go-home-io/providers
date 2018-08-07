@@ -2,33 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/Knetic/govaluate"
-  packages = ["."]
-  revision = "9aa49832a739dcd78a5542ff189fb82c3e423116"
-
-[[projects]]
-  name = "github.com/go-home-io/server"
-  packages = [
-    "plugins/common",
-    "plugins/device",
-    "plugins/device/enums",
-    "plugins/helpers"
-  ]
-  revision = "3a3418aca015c66dbacbadbd7f2cb9b6b312f910"
-  version = "0.0.3"
-
-[[projects]]
-  name = "github.com/google/go-cmp"
-  packages = [
-    "cmp",
-    "cmp/internal/diff",
-    "cmp/internal/function",
-    "cmp/internal/value"
-  ]
-  revision = "3af367b6b30c263d47e8895973edcca9a49cf029"
-  version = "v0.2.0"
-
-[[projects]]
   name = "github.com/koron/go-dproxy"
   packages = ["."]
   revision = "fd990aff3734271e213a87f118319cf104bb2dd6"
@@ -36,28 +9,13 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/savaki/jq"
-  packages = [
-    ".",
-    "scanner"
-  ]
-  revision = "0e6baecebbf8a24a6590d3fc8232165008d6e5d8"
-
-[[projects]]
-  branch = "master"
   name = "github.com/sndnvaps/yahoo_weather_api"
   packages = ["."]
   revision = "c6f235a6be11595da4d76cde46c38f20cea38661"
 
-[[projects]]
-  name = "gopkg.in/yaml.v2"
-  packages = ["."]
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9894c5b420453a03eb0d2e05980bb5b11dab1c98d54c13b5582e1f4293980f9e"
+  inputs-digest = "8e03f5f4993c26dfc7fd751c7fdeaf5efab7bf4520daaa123a1ed682ed221ead"
   solver-name = "gps-cdcl"
   solver-version = 1

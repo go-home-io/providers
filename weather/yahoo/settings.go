@@ -11,7 +11,6 @@ import (
 // Settings has data required to start weather.
 type Settings struct {
 	Location        string           `yaml:"location" validate:"required"`
-	UOM             enums.UOM        `yaml:"units" default:"imperial"`
 	Properties      []enums.Property `yaml:"properties"`
 	PollingInterval int              `yaml:"pollingInterval" validate:"gte=10" default:"10"`
 
