@@ -4,6 +4,7 @@ import (
 	"github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device"
+	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
 )
 
@@ -15,7 +16,7 @@ type MQTTSensor struct {
 // Constructs a new sensor.
 // nolint:dupl
 func newSensor(topicPrefix string, parser helpers.ITemplateParser, settings *DeviceSettings, client mqtt.Client,
-	logger common.ILoggerProvider) *MQTTSensor {
+	logger common.ILoggerProvider, uom enums.UOM) *MQTTSensor {
 	s := &MQTTSensor{
 		mqttDevice: mqttDevice{
 			settings:     settings,
@@ -23,6 +24,7 @@ func newSensor(topicPrefix string, parser helpers.ITemplateParser, settings *Dev
 			parser:       parser,
 			topicsPrefix: topicPrefix,
 			logger:       logger,
+			uom:          uom,
 		},
 	}
 

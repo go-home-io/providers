@@ -21,12 +21,14 @@ type MQTTHub struct {
 	parser     helpers.ITemplateParser
 	logger     common.ILoggerProvider
 	spec       *device.Spec
+	uom        enums.UOM
 
 	devices []interface{}
 }
 
 // Init performs initial plugin initialization.
 func (m *MQTTHub) Init(data *device.InitDataDevice) error {
+	m.uom = data.UOM
 	m.updateChan = data.DeviceStateUpdateChan
 	m.parser = helpers.NewParser()
 	m.logger = data.Logger
@@ -98,10 +100,10 @@ func (m *MQTTHub) Load() (*device.HubLoadResult, error) {
 
 		switch v.Type {
 		case enums.DevSwitch:
-			s = newSwitch(m.Settings.Prefix, m.parser, v, m.client, m.logger)
+			s = newSwitch(m.Settings.Prefix, m.parser, v, m.client, m.logger, m.uom)
 			state, err = s.(*MQTTSwitch).Load()
 		case enums.DevSensor:
-			s = newSensor(m.Settings.Prefix, m.parser, v, m.client, m.logger)
+			s = newSensor(m.Settings.Prefix, m.parser, v, m.client, m.logger, m.uom)
 			state, err = s.(*MQTTSensor).Load()
 		default:
 			m.logger.Warn("This MQTT device type is unsupported", common.LogDeviceTypeToken, v.Type.String())

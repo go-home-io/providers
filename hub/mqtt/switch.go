@@ -16,7 +16,7 @@ type MQTTSwitch struct {
 // Constructs a new switch.
 // nolint:dupl
 func newSwitch(topicPrefix string, parser helpers.ITemplateParser, settings *DeviceSettings, client mqtt.Client,
-	logger common.ILoggerProvider) *MQTTSwitch {
+	logger common.ILoggerProvider, uom enums.UOM) *MQTTSwitch {
 	s := &MQTTSwitch{
 		mqttDevice: mqttDevice{
 			settings:     settings,
@@ -24,6 +24,7 @@ func newSwitch(topicPrefix string, parser helpers.ITemplateParser, settings *Dev
 			parser:       parser,
 			topicsPrefix: topicPrefix,
 			logger:       logger,
+			uom:          uom,
 		},
 	}
 

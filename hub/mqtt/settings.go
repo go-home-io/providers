@@ -45,4 +45,5 @@ type DeviceSettings struct {
 	Pessimistic bool              `yaml:"pessimistic" default:"-"`
 	Properties  []*PropertyMapper `yaml:"properties"`
 	Commands    []*CommandMapper  `yaml:"commands"`
+	UOM         enums.UOM         `yaml:"units" default:"imperial"`
 }

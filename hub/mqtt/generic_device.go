@@ -44,6 +44,7 @@ type mqttDevice struct {
 	logger       common.ILoggerProvider
 	client       mqtt.Client
 	commands     map[enums.Command]*commandMapper
+	uom          enums.UOM
 }
 
 // Handles update from MQTT broker.
@@ -53,6 +54,7 @@ func (m *mqttDevice) handleUpdates(payload []byte, expression helpers.ITemplateE
 
 	msg := string(payload)
 	val, err := expression.Parse(msg)
+
 	if err != nil {
 		m.logger.Error("Failed to map received mqtt property", err,
 			common.LogDevicePropertyToken, property.String(), "message", msg)
@@ -77,6 +79,8 @@ func (m *mqttDevice) handleUpdates(payload []byte, expression helpers.ITemplateE
 	if fieldV.Kind() == reflect.Ptr {
 		fieldV = fieldV.Elem()
 	}
+
+	val = helpers.UOMConvertInterface(val, property, m.settings.UOM, m.uom)
 	if helpers.PropertyDeepEqual(fieldV.Interface(), val, property) {
 		return
 	}
