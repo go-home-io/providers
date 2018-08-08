@@ -1,9 +1,8 @@
 package main
 
 import (
-	"time"
-
 	"strings"
+	"time"
 
 	"github.com/go-home-io/server/plugins/device/enums"
 )
