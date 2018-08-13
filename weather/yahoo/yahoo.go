@@ -18,7 +18,6 @@ type YahooWeather struct {
 
 	state  *device.WeatherState
 	logger common.ILoggerProvider
-	proxy  dproxy.Proxy
 	uom    enums.UOM
 }
 
@@ -27,14 +26,8 @@ func (w *YahooWeather) Init(data *device.InitDataDevice) error {
 	w.logger = data.Logger
 	w.uom = data.UOM
 
-	w.proxy = yahoo.GetChannelNode(w.Settings.Location)
-	if nil == w.proxy {
-		err := errors.New("failed to load location")
-		w.logger.Error("Failed to load yahoo location", err)
-		return err
-	}
-
-	return nil
+	_, err := w.getProxy()
+	return err
 }
 
 // Unload is not used.
@@ -67,11 +60,16 @@ func (w *YahooWeather) Load() (*device.WeatherState, error) {
 
 // Update pulls updates from yahoo weather.
 func (w *YahooWeather) Update() (*device.WeatherState, error) {
+	proxy, err := w.getProxy()
+	if err != nil {
+		return nil, err
+	}
+
 	w.state = &device.WeatherState{}
 
-	uom := yahoo.GetUnits(w.proxy)
+	uom := yahoo.GetUnits(proxy)
 	w.logger.Debug("Pulls atmosphere data from Yahoo weather")
-	a := yahoo.GetAtmosphere(w.proxy)
+	a := yahoo.GetAtmosphere(proxy)
 
 	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropHumidity) {
 		w.state.Humidity = a.Humidity
@@ -87,12 +85,12 @@ func (w *YahooWeather) Update() (*device.WeatherState, error) {
 
 	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropTemperature) {
 		w.logger.Debug("Pulls temperature from Yahoo weather")
-		c := yahoo.GetConditions(w.proxy)
+		c := yahoo.GetConditions(proxy)
 		w.state.Temperature = helpers.UOMConvertString(c.Temp, enums.PropTemperature, uom.Temperature, w.uom)
 	}
 
 	w.logger.Debug("Pulls astronomy data from Yahoo weather")
-	as := yahoo.GetAstronomy(w.proxy)
+	as := yahoo.GetAstronomy(proxy)
 	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropSunset) {
 		w.state.Sunset = as.Sunset
 	}
@@ -102,7 +100,7 @@ func (w *YahooWeather) Update() (*device.WeatherState, error) {
 	}
 
 	w.logger.Debug("Pulls wind data from Yahoo weather")
-	wi := yahoo.GetWindInfo(w.proxy)
+	wi := yahoo.GetWindInfo(proxy)
 	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropWindDirection) {
 		w.state.WindDirection = wi.Direction
 	}
@@ -112,4 +110,16 @@ func (w *YahooWeather) Update() (*device.WeatherState, error) {
 	}
 
 	return w.state, nil
+}
+
+// Returns object proxy.
+func (w *YahooWeather) getProxy() (dproxy.Proxy, error) {
+	proxy := yahoo.GetChannelNode(w.Settings.Location)
+	if nil == proxy {
+		err := errors.New("failed to load location")
+		w.logger.Error("Failed to load yahoo location", err)
+		return nil, err
+	}
+
+	return proxy, nil
 }
