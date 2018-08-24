@@ -39,6 +39,7 @@ type CommandMapper struct {
 // DeviceSettings defines single hub device mapper.
 type DeviceSettings struct {
 	Type        enums.DeviceType  `yaml:"type" validate:"required"`
+	SensorType  enums.SensorType  `yaml:"sensorType" default:"generic"`
 	Name        string            `yaml:"name" validate:"required"`
 	Qos         byte              `yaml:"qos" validate:"required,gte=0,lte=2" default:"2"`
 	Retained    bool              `yaml:"retained" default:"false"`

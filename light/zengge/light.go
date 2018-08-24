@@ -120,6 +120,13 @@ func (z *ZenggeLight) SetScene(string common.String) error {
 
 // SetColor makes an attempt to change device color.
 func (z *ZenggeLight) SetColor(color common.Color) error {
+	if !z.State.On {
+		err := z.On()
+		if err != nil {
+			return err
+		}
+	}
+
 	c := control.Color{
 		R:    color.R,
 		G:    color.G,

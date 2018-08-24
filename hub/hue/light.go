@@ -173,8 +173,10 @@ func (h *HueLight) SetScene(str common.String) error {
 			}
 
 			h.performActualUpdate(true)
+			return nil
 		}
 	}
+
 	h.logger.Warn("Failed to find HUE scene", common.LogDeviceNameToken, h.ID, "scene", str.Value)
 	return errors.New("scene not found")
 }

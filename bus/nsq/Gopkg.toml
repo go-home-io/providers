@@ -1,9 +1,0 @@
-ignored = ["github.com/go-home-io/server/*"]
-
-[[constraint]]
-  name = "github.com/nsqio/go-nsq"
-  version = "1.0.7"
-
-[prune]
-  go-tests = true
-  unused-packages = true

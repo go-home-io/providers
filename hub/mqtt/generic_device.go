@@ -117,6 +117,11 @@ func (m *mqttDevice) subscribe() {
 		SupportedProperties: make([]enums.Property, 0),
 	}
 
+	if m.settings.Type == enums.DevSensor {
+		m.spec.SupportedProperties = append(m.spec.SupportedProperties, enums.PropSensorType)
+		m.state.(*device.SensorState).SensorType = m.settings.SensorType
+	}
+
 	for _, v := range m.settings.Properties {
 		topic := fmt.Sprintf("%s%s", m.topicsPrefix, v.Topic)
 		expr, err := m.parser.Compile(v.Mapper)

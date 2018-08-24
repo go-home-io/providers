@@ -57,6 +57,7 @@ func (m *MQTTHub) Init(data *device.InitDataDevice) error {
 
 		for _, v := range m.devices {
 			v.(IGenericDevice).ReConnect()
+			time.Sleep(50 * time.Millisecond)
 		}
 	}
 
