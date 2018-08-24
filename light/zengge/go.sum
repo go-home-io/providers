@@ -37,7 +37,7 @@ github.com/vikstrous/zengge-lightcontrol v0.0.0-20170104042503-6613d030df9f h1:y
 github.com/vikstrous/zengge-lightcontrol v0.0.0-20170104042503-6613d030df9f/go.mod h1:DuVpuq3v/B5raOGwLTos6VEuw36lacJxdrbEo0rIw0U=
 github.com/vkorn/go-bintray v0.0.0-20180801131521-627b4bc5e556/go.mod h1:BjbVAtTTx2WCtCdrGzRqV7ANJ5GgvhynQt0WZmVWBJU=
 golang.org/x/crypto v0.0.0-20180820150726-614d502a4dac/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
-golang.org/x/net v0.0.0-20170809000501-1c05540f6879/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+golang.org/x/net v0.0.0-20180821023952-922f4815f713/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sys v0.0.0-20180821140842-3b58ed4ad339/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

@@ -5,6 +5,5 @@ package main
 // nolint: deadcode
 func Load() (interface{}, interface{}, error) {
 	settings := &Settings{}
-
 	return &StateTrigger{Settings: settings}, settings, nil
 }
