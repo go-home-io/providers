@@ -239,20 +239,26 @@ func (h *HueLight) changeBrightnessOverTime(percent device.GradualBrightness) {
 			nextVal := uint8(float32(currentValue) + step*float32(ii+1))
 			if nextVal != curVal {
 				if h.IsGroup {
-					h.Group.Bri(nextVal)
+					h.Group.Bri(nextVal) // nolint: gosec
 				} else {
-					h.Light.Bri(nextVal)
+					h.Light.Bri(nextVal) // nolint: gosec
 				}
 			}
 
 			curVal = nextVal
 			time.Sleep(1000 * time.Millisecond / overtimeBrightnessStepsPerSecond)
 		}
+		var err error
 		if h.IsGroup {
-			h.Group.Bri(desiredValue)
+			err = h.Group.Bri(desiredValue)
 		} else {
-			h.Light.Bri(desiredValue)
+			err = h.Light.Bri(desiredValue)
 		}
+
+		if err != nil {
+			return
+		}
+
 		h.performActualUpdate(false)
 
 	}()
@@ -336,7 +342,10 @@ func (h *HueLight) pickScenes() []string {
 // to sync with internal state data.
 func (h *HueLight) performActualUpdate(skipPublishing bool) {
 	if h.IsGroup {
-		g, _ := h.Bridge.GetGroup(h.InternalID)
+		g, err := h.Bridge.GetGroup(h.InternalID)
+		if err != nil {
+			return
+		}
 		h.setState(g.State)
 
 		for _, i := range h.Group.Lights {
@@ -346,7 +355,11 @@ func (h *HueLight) performActualUpdate(skipPublishing bool) {
 			}
 		}
 	} else {
-		l, _ := h.Bridge.GetLight(h.InternalID)
+		l, err := h.Bridge.GetLight(h.InternalID)
+		if err != nil {
+			return
+		}
+
 		h.setState(l.State)
 	}
 

@@ -58,7 +58,7 @@ func (i *InfluxStorage) History(deviceID string, hrs int) map[string]map[int64]i
 	}
 
 	q := client.NewQuery(
-		fmt.Sprintf( // nolint: gas
+		fmt.Sprintf( // nolint: gosec
 			`SELECT * FROM "%s" WHERE %s='%s' AND time > '%s' - %dh ORDER BY time DESC LIMIT 1000`,
 			deviceID,
 			eventToken,

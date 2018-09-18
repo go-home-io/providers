@@ -26,7 +26,7 @@ func (e *HueEmulator) initWorker(*api.InitDataAPI) error {
 
 	// It was validated before plugin's load
 	parts := strings.Split(e.Settings.AdvAddress, ":")
-	port, _ := strconv.Atoi(parts[1])
+	port, _ := strconv.Atoi(parts[1]) // nolint: gosec
 
 	l, err := net.ListenTCP("tcp4", &net.TCPAddr{
 		IP:   net.ParseIP("0.0.0.0"),
@@ -55,7 +55,11 @@ func (e *HueEmulator) initWorker(*api.InitDataAPI) error {
 			return
 		}
 	}()
-	e.communicator.Subscribe(e.chCommands)
+	err = e.communicator.Subscribe(e.chCommands)
+	if err != nil {
+		return err
+	}
+
 	go e.workerCycle(e.chCommands)
 	e.communicator.Publish(&DeviceCommandMessage{
 		IsDiscovery: true,
@@ -83,7 +87,7 @@ func (e *HueEmulator) processDeviceUpdate(msg []byte) {
 		return
 	}
 
-	dHash := ""
+	var dHash string
 	old, ok := e.devices[update.DeviceID]
 	if ok {
 		dHash = old.internalHash
@@ -189,7 +193,7 @@ func (e *HueEmulator) sendJSON(w http.ResponseWriter, val interface{}) {
 		e.logger.Error("Failed to respond", err)
 		return
 	}
-	w.Write(buf.Bytes())
+	w.Write(buf.Bytes()) // nolint: gosec
 }
 
 // Wraps internal device state into HUE format.
@@ -221,7 +225,7 @@ func getHueBrightness(internal *DeviceUpdateMessage) uint8 {
 		return brightnessMax
 	}
 
-	return uint8(float32(b.(*common.Percent).Value) * float32(brightnessMax) / 100.0)
+	return uint8(float32(b.(common.Percent).Value) * float32(brightnessMax) / 100.0)
 }
 
 // Transforms internal ON status to HUE format.
@@ -238,6 +242,9 @@ func getIsOn(internal *DeviceUpdateMessage) bool {
 // emulator-consumers are using same int ID for calling get/set state API.
 func hash(s string) string {
 	h := fnv.New32a()
-	h.Write([]byte(s))
+	_, err := h.Write([]byte(s))
+	if err != nil {
+		return ""
+	}
 	return fmt.Sprint(h.Sum32())
 }

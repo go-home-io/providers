@@ -6,7 +6,7 @@ import "github.com/go-home-io/server/plugins/device/enums"
 type Settings struct {
 	IP  string    `yaml:"ip" validate:"required,ipv4"`
 	Key string    `yaml:"key" validate:"required"`
-	UOM enums.UOM `yaml:"uom" default:"imperial"`
+	UOM enums.UOM `yaml:"units" default:"metric"`
 }
 
 // Validate is not used.

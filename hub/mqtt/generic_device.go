@@ -80,6 +80,8 @@ func (m *mqttDevice) handleUpdates(payload []byte, expression helpers.ITemplateE
 		fieldV = fieldV.Elem()
 	}
 
+	val = helpers.PropertyFixNum(val, property)
+
 	val = helpers.UOMConvertInterface(val, property, m.settings.UOM, m.uom)
 	if helpers.PropertyDeepEqual(fieldV.Interface(), val, property) {
 		return

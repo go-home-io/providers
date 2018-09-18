@@ -39,7 +39,7 @@ func (m *MQTTSensor) Update() (*device.SensorState, error) {
 
 // Load performs initial sensor load.
 func (m *MQTTSensor) Load() (*device.SensorState, error) {
-	m.subscribe()
 	m.state = &device.SensorState{}
+	m.subscribe()
 	return m.state.(*device.SensorState), nil
 }

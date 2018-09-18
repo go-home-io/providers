@@ -31,7 +31,10 @@ func (s *Settings) Validate() error {
 	allFound := false
 	s.load = make([]HueResources, 0)
 	for _, v := range s.LoadResources {
-		resource, _ := HueResourcesString(v)
+		resource, err := HueResourcesString(v)
+		if err != nil {
+			resource = ResourceAll
+		}
 
 		if ResourceAll == resource {
 			allFound = true

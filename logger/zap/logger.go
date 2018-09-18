@@ -108,7 +108,7 @@ func (l *ZapLogger) Fatal(msg string, fields ...string) {
 func (l *ZapLogger) Flush() {
 	l.Lock()
 	defer l.Unlock()
-	l.logger.Sync()
+	l.logger.Sync() // nolint: gosec
 }
 
 // Converts input string params into zap.Fields.

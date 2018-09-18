@@ -33,10 +33,11 @@ func newSwitch(topicPrefix string, parser helpers.ITemplateParser, settings *Dev
 
 // Load performs initial sensor load.
 func (m *MQTTSwitch) Load() (*device.SwitchState, error) {
-	m.subscribe()
 	m.state = &device.SwitchState{
 		On: false,
 	}
+
+	m.subscribe()
 
 	if enums.SliceContainsCommand(m.spec.SupportedCommands, enums.CmdOn) &&
 		enums.SliceContainsCommand(m.spec.SupportedCommands, enums.CmdOff) {

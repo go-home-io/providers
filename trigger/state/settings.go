@@ -44,7 +44,12 @@ type Settings struct {
 
 // Validate validates supplied settings.
 func (s *Settings) Validate() error {
-	s.decisionLogic, _ = logicString(s.Logic)
+	l, err := logicString(s.Logic)
+	if err != nil {
+		l = logicOr
+	}
+
+	s.decisionLogic = l
 
 	for _, v := range s.Devices {
 		var err error

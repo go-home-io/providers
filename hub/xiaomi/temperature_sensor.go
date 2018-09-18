@@ -26,8 +26,9 @@ func (s *xiaomiTemperatureSensor) Init(data *device.InitDataDevice) error {
 // GetSpec returns device spec.
 func (s *xiaomiTemperatureSensor) GetSpec() *device.Spec {
 	return &device.Spec{
-		SupportedProperties: []enums.Property{enums.PropTemperature, enums.PropHumidity, enums.PropSensorType},
-		SupportedCommands:   []enums.Command{},
+		SupportedProperties: []enums.Property{enums.PropTemperature, enums.PropHumidity,
+			enums.PropSensorType, enums.PropBatteryLevel},
+		SupportedCommands: []enums.Command{},
 	}
 }
 
@@ -46,6 +47,7 @@ func (s *xiaomiTemperatureSensor) InternalUpdate(state interface{}, firstSeen bo
 	st := state.(*miio.SensorHTState)
 	s.state.Temperature = helpers.UOMConvert(st.Temperature, enums.PropTemperature, s.currentUOM, s.desiredUOM)
 	s.state.Humidity = st.Humidity
+	s.state.BatteryLevel = uint8(st.Battery)
 
 	if !firstSeen {
 		s.updatesChan <- &device.StateUpdateData{State: s.state}

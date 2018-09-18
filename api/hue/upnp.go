@@ -77,7 +77,7 @@ func (d *discoverUPNP) Start() error {
 
 // Stop stops running UPNP server.
 func (d *discoverUPNP) Stop() {
-	d.connection.Close()
+	d.connection.Close() // nolint: gosec
 }
 
 // Waits for incoming UDP messages.
@@ -119,8 +119,13 @@ func (d *discoverUPNP) discoveryRespond(addr *net.UDPAddr) {
 	url := fmt.Sprintf("http://%s/upnp/setup.xml", d.advAddress)
 
 	var buf bytes.Buffer
-	buf.WriteString("HTTP/1.1 200 OK\r\n")
-	http.Header{
+	_, err = buf.WriteString("HTTP/1.1 200 OK\r\n")
+	if err != nil {
+		d.logger.Error("Error writing UPnP http", err)
+		return
+	}
+
+	err = http.Header{
 		"Cache-Control": {`max-age=300`},
 		"Ext":           {``},
 		"Location":      {url},
@@ -128,13 +133,21 @@ func (d *discoverUPNP) discoveryRespond(addr *net.UDPAddr) {
 		"St":            {`urn:schemas-upnp-org:device:basic:1`},
 		"Usn":           {`uuid:f6543a06-800d-48ba-8d8f-bc2949eddc33`},
 	}.Write(&buf)
-	buf.WriteString("\r\n")
+	if err != nil {
+		d.logger.Error("Error writing UPnP headers", err)
+		return
+	}
+
+	_, err = buf.WriteString("\r\n")
+	if err != nil {
+		d.logger.Error("Error writing UPnP finish", err)
+		return
+	}
 
 	_, err = c.Write(buf.Bytes())
 	if err != nil {
-		d.logger.Error("Error writing UPnP response:", err)
+		d.logger.Error("Error writing UPnP response", err)
 	}
-
 }
 
 // Setup replies on initial HTTP discovery request
@@ -171,10 +184,17 @@ func (d *discoverUPNP) Setup(w http.ResponseWriter, _ *http.Request, _ httproute
 	}
 
 	w.Header().Set("Content-Type", "application/xml")
-	io.WriteString(w, xml.Header)
-	if err := xml.NewEncoder(w).Encode(&x); err != nil {
+	_, err := io.WriteString(w, xml.Header)
+	if err != nil {
+		d.logger.Error("Error writing xml header", err)
+	}
+	err = xml.NewEncoder(w).Encode(&x)
+	if err != nil {
 		d.logger.Error("Encoder error", err)
 		return
 	}
-	io.WriteString(w, "\n")
+	_, err = io.WriteString(w, "\n")
+	if err != nil {
+		d.logger.Error("Error writing xml", err)
+	}
 }

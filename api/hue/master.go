@@ -13,7 +13,10 @@ import (
 // Init plugin on master node.
 func (e *HueEmulator) initMaster(data *api.InitDataAPI) error {
 	_, chUpdate := data.FanOut.SubscribeDeviceUpdates()
-	e.communicator.Subscribe(e.chCommands)
+	err := e.communicator.Subscribe(e.chCommands)
+	if err != nil {
+		return err
+	}
 	go e.masterCycle(chUpdate, e.chCommands)
 	return nil
 }
