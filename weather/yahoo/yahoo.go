@@ -59,13 +59,21 @@ func (w *YahooWeather) Load() (*device.WeatherState, error) {
 }
 
 // Update pulls updates from yahoo weather.
-func (w *YahooWeather) Update() (*device.WeatherState, error) {
+func (w *YahooWeather) Update() (st *device.WeatherState, e error) {
 	proxy, err := w.getProxy()
 	if err != nil {
 		return nil, err
 	}
 
 	w.state = &device.WeatherState{}
+
+	defer func() {
+		if r := recover(); r != nil {
+			st = nil
+			e = errors.New("failed to call Yahoo API")
+			w.logger.Error("Yahoo weather not responding", e)
+		}
+	}()
 
 	uom := yahoo.GetUnits(proxy)
 	w.logger.Debug("Pulls atmosphere data from Yahoo weather")

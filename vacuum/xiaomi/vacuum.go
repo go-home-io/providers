@@ -191,15 +191,19 @@ func (v *XiaomiVacuum) processUpdates() {
 	}
 
 	switch v.vacuum.State.State {
-	case miio.VacStateInitiating, miio.VacStateSleeping, miio.VacStateWaiting,
+	case miio.VacStateInitiating, miio.VacStateSleeping,
 		miio.VacStateShuttingDown, miio.VacStateUpdating, miio.VacStateDocking:
 		v.state.VacStatus = enums.VacDocked
 	case miio.VacStateCleaning, miio.VacStateReturning, miio.VacStateSpot, miio.VacStateZone:
 		v.state.VacStatus = enums.VacCleaning
-	case miio.VacStatePaused:
+	case miio.VacStatePaused, miio.VacStateWaiting:
 		v.state.VacStatus = enums.VacPaused
 	case miio.VacStateCharging:
-		v.state.VacStatus = enums.VacCharging
+		if v.state.BatteryLevel > 80 {
+			v.state.VacStatus = enums.VacDocked
+		} else {
+			v.state.VacStatus = enums.VacCharging
+		}
 	case miio.VacStateFull:
 		v.state.VacStatus = enums.VacFull
 	}

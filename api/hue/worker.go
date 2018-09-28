@@ -232,10 +232,25 @@ func getHueBrightness(internal *DeviceUpdateMessage) uint8 {
 func getIsOn(internal *DeviceUpdateMessage) bool {
 	on, ok := internal.State[enums.PropOn]
 	if !ok {
-		return false
+		return getIsOnDeviceSpecific(internal)
 	}
 
 	return on.(bool)
+}
+
+// Transforms device-specific property into ON/OFF status.
+func getIsOnDeviceSpecific(internal *DeviceUpdateMessage) bool {
+	switch internal.DeviceType {
+	case enums.DevVacuum:
+		st, ok := internal.State[enums.PropVacStatus]
+		if !ok {
+			return false
+		}
+
+		return st == enums.VacCleaning
+	}
+
+	return false
 }
 
 // Returns simple int hash for the deviceID. This is required since

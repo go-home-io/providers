@@ -7,3 +7,5 @@ require (
 )
 
 replace github.com/go-home-io/server => ../../../server
+
+replace github.com/sndnvaps/yahoo_weather_api => github.com/vkorn/yahoo_weather_api v0.0.0-20180926091913-45911caf7697
