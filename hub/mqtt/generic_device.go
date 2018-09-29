@@ -104,6 +104,8 @@ func (m *mqttDevice) ReConnect() {
 		topic := v.topic
 		expr := v.expression
 		prop := v.property
+		m.logger.Debug("Re-subscribing to MQTT", logTokenTopic, topic)
+		m.client.Unsubscribe(topic)
 		m.client.Subscribe(topic, m.settings.Qos, func(client mqtt.Client, message mqtt.Message) {
 			go m.handleUpdates(message.Payload(), expr, prop)
 		})
@@ -133,6 +135,7 @@ func (m *mqttDevice) subscribe() {
 			continue
 		}
 		prop := v.Property
+		m.logger.Debug("Subscribing to MQTT", logTokenTopic, topic)
 		m.client.Subscribe(topic, m.settings.Qos, func(client mqtt.Client, message mqtt.Message) {
 			go m.handleUpdates(message.Payload(), expr, prop)
 		})

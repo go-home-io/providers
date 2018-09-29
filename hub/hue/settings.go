@@ -22,6 +22,7 @@ type Settings struct {
 	Token           string   `yaml:"token"`
 	LoadResources   []string `yaml:"loadResources" validate:"unique,required,min=1,dive,oneof=* lights groups" default:"lights"` //nolint: lll
 	PollingInterval int      `yaml:"pollingInterval" validate:"isdefault|numeric,gte=2" default:"20"`
+
 	load            []HueResources
 	pollingInterval time.Duration
 }

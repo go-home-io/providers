@@ -43,6 +43,7 @@ func (c *WebCamera) Init(data *device.InitDataDevice) error {
 			"remote-debugging-address": c.Settings.ChromeAddress,
 			"addr":                     c.Settings.ChromeAddress,
 			"remote-debugging-port":    c.Settings.ChromePort,
+			"port":                     c.Settings.ChromePort,
 		},
 		"", "", "", "")
 

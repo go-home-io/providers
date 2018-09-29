@@ -156,13 +156,11 @@ func (e *HueEmulator) setDeviceState(w http.ResponseWriter, r *http.Request, par
 			}
 
 			if req.Bri != nil {
-				e.communicator.Publish(&DeviceCommandMessage{
-					Command:  enums.CmdSetBrightness,
-					DeviceID: v.DeviceID,
-					Attributes: &common.Percent{
-						Value: uint8((float32(*req.Bri) * 100.0) / float32(brightnessMax)),
-					},
-				})
+				cmd := setBrightnessDeviceSpecific(v,
+					uint8((float32(*req.Bri)*100.0)/float32(brightnessMax)))
+				if cmd != nil {
+					e.communicator.Publish(cmd)
+				}
 			}
 
 			m := make(map[string]interface{})
@@ -217,7 +215,7 @@ func getDevice(internal *DeviceUpdateMessage) *Light {
 func getHueBrightness(internal *DeviceUpdateMessage) uint8 {
 	bri, ok := internal.State[enums.PropBrightness]
 	if !ok {
-		return brightnessMax
+		return getBrightnessDeviceSpecific(internal)
 	}
 
 	b, err := helpers.UnmarshalProperty(bri, enums.PropBrightness)
@@ -225,7 +223,7 @@ func getHueBrightness(internal *DeviceUpdateMessage) uint8 {
 		return brightnessMax
 	}
 
-	return uint8(float32(b.(common.Percent).Value) * float32(brightnessMax) / 100.0)
+	return convertPercentToHueBrightness(b.(common.Percent).Value)
 }
 
 // Transforms internal ON status to HUE format.
@@ -236,21 +234,6 @@ func getIsOn(internal *DeviceUpdateMessage) bool {
 	}
 
 	return on.(bool)
-}
-
-// Transforms device-specific property into ON/OFF status.
-func getIsOnDeviceSpecific(internal *DeviceUpdateMessage) bool {
-	switch internal.DeviceType {
-	case enums.DevVacuum:
-		st, ok := internal.State[enums.PropVacStatus]
-		if !ok {
-			return false
-		}
-
-		return st == enums.VacCleaning
-	}
-
-	return false
 }
 
 // Returns simple int hash for the deviceID. This is required since

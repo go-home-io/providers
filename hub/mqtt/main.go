@@ -10,3 +10,8 @@ func Load() (interface{}, interface{}, error) {
 		Settings: settings,
 	}, settings, nil
 }
+
+const (
+	// Log representation.
+	logTokenTopic = "topic"
+)
