@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"time"
 
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device/enums"
+	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/go-home-io/server/plugins/trigger"
 )
 
@@ -66,7 +68,7 @@ func (t *StateTrigger) react(msg *common.MsgDeviceUpdate, noTrigger bool) {
 				continue
 			}
 
-			v.triggered = reflect.DeepEqual(s, v.State)
+			v.triggered = t.isTriggered(s, v)
 			if !v.triggered {
 				continue
 			}
@@ -85,6 +87,39 @@ func (t *StateTrigger) react(msg *common.MsgDeviceUpdate, noTrigger bool) {
 			break
 		}
 	}
+}
+
+// Checks whether device is triggered.
+func (t *StateTrigger) isTriggered(state interface{}, device *DeviceEntry) bool {
+	if device.mapperExpr != nil {
+		return t.isTriggeredMapper(state, device)
+	}
+
+	return t.isTriggeredState(state, device)
+}
+
+// Checks whether mapper state triggered.
+func (t *StateTrigger) isTriggeredMapper(state interface{}, device *DeviceEntry) bool {
+	ok, err := device.mapperExpr.Parse(fmt.Sprintf("%+v", helpers.PlainProperty(state, device.Property)))
+	if err != nil {
+		t.logger.Error("Failed to execute state trigger mapper", err,
+			common.LogDevicePropertyToken, device.Property.String())
+		return false
+	}
+
+	val, isBool := ok.(bool)
+	if !isBool {
+		t.logger.Error("Mapper returned non-bool value", err,
+			common.LogDevicePropertyToken, device.Property.String())
+		return false
+	}
+
+	return val
+}
+
+// Checks whether state triggered.
+func (t *StateTrigger) isTriggeredState(state interface{}, device *DeviceEntry) bool {
+	return reflect.DeepEqual(state, device.State)
 }
 
 // Makes a decision whether need to trigger.

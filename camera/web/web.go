@@ -197,13 +197,13 @@ func (c *WebCamera) closeTab() {
 
 // Takes a screenshot.
 func (c *WebCamera) getPicture() error {
-	c.Lock()
-	defer c.Unlock()
-
 	if nil == c.tab {
 		go c.openTab()
 		return errors.New("tab is currently closed")
 	}
+
+	c.Lock()
+	defer c.Unlock()
 
 	select {
 	case screen := <-c.tab.Page().CaptureScreenshot(&page.CaptureScreenshotParams{

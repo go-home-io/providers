@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/go-home-io/server/plugins/device/enums"
@@ -25,7 +26,9 @@ type DeviceEntry struct {
 	Device   string         `yaml:"device" validate:"required,gt=0"`
 	Property enums.Property `yaml:"property" validate:"required"`
 	State    interface{}    `yaml:"state"`
+	Mapper   string         `yaml:"mapper"`
 
+	mapperExpr   helpers.ITemplateExpression
 	deviceRegexp glob.Glob
 	triggered    bool
 }
@@ -40,6 +43,7 @@ type Settings struct {
 	Pessimistic bool           `yaml:"pessimistic" default:"-"`
 
 	decisionLogic logic
+	parser        helpers.ITemplateParser
 }
 
 // Validate validates supplied settings.
@@ -49,13 +53,28 @@ func (s *Settings) Validate() error {
 		l = logicOr
 	}
 
+	s.parser = helpers.NewParser()
 	s.decisionLogic = l
 
 	for _, v := range s.Devices {
+		if (nil == v.State && "" == v.Mapper) || (nil != v.State && "" != v.Mapper) {
+			return errors.New("either state or mapper should be defined")
+		}
+
 		var err error
 		v.deviceRegexp, err = glob.Compile(v.Device)
 		if err != nil {
 			return err
+		}
+
+		if "" != v.Mapper {
+			exp, err := s.parser.Compile(v.Mapper)
+			if err != nil {
+				return err
+			}
+
+			v.mapperExpr = exp
+			continue
 		}
 
 		v.State, err = helpers.PropertyFixYaml(v.State, v.Property)
