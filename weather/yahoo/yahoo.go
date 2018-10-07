@@ -84,7 +84,8 @@ func (w *YahooWeather) Update() (st *device.WeatherState, e error) {
 	}
 
 	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropPressure) {
-		w.state.Pressure = helpers.UOMConvertString(a.Pressure, enums.PropPressure, uom.Pressure, w.uom)
+		// Yahoo always reports pressure in mb.
+		w.state.Pressure = helpers.UOMConvert(a.Pressure, enums.PropPressure, enums.UOMMetric, w.uom)
 	}
 
 	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropVisibility) {
