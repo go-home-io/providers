@@ -7,14 +7,15 @@ import (
 
 // Settings has data required to start RFID reader.
 type Settings struct {
-	BusID    int               `yaml:"bus" default:"0"`
-	DeviceID int               `yaml:"device" default:"0"`
-	ResetPin int               `yaml:"reset" default:"13"`
-	IRQPin   int               `yaml:"reset" default:"11"`
-	Sector   int               `yaml:"sector" default:"1"`
-	Block    int               `yaml:"block" default:"0"`
-	Users    map[string]string `yaml:"users" validate:"required,min=1"`
-	Key      string            `yaml:"key" validate:"required,len=12"`
+	BusID       int               `yaml:"bus" default:"0"`
+	DeviceID    int               `yaml:"device" default:"0"`
+	ResetPin    int               `yaml:"reset" default:"13"`
+	IRQPin      int               `yaml:"irq" default:"11"`
+	AntennaGain int               `yaml:"antennaGain" validate:"gte=0,lte=7" default:"4"`
+	Sector      int               `yaml:"sector" default:"1"`
+	Block       int               `yaml:"block" default:"0"`
+	Users       map[string]string `yaml:"users" validate:"required,min=1"`
+	Key         string            `yaml:"key" validate:"required,len=12"`
 
 	encKey []byte
 	users  map[string][]byte

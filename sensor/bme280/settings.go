@@ -6,7 +6,7 @@ import "time"
 type Settings struct {
 	DeviceID        int `yaml:"device" default:"1"`
 	Address         int `yaml:"address" default:"0x76"`
-	PollingInterval int `yaml:"pollingInterval" validate:"gt=10" default:"30"`
+	PollingInterval int `yaml:"pollingInterval" validate:"gt=2" default:"30"`
 
 	updateInterval time.Duration
 }

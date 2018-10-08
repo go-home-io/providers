@@ -10,3 +10,5 @@ require (
 )
 
 replace github.com/go-home-io/server => ../../../server
+
+replace github.com/jdevelop/golang-rpi-extras => github.com/vkorn/golang-rpi-extras v0.0.0-20181008014305-fe3f36e0b5f6

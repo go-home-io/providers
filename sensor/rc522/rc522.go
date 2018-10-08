@@ -47,6 +47,7 @@ func (s *RC522Sensor) Init(data *device.InitDataDevice) error {
 	}
 
 	s.device = d
+	s.device.SetAntennaGain(s.Settings.AntennaGain)
 	s.state = &device.SensorState{
 		On:         false,
 		SensorType: enums.SenPresence,
@@ -56,6 +57,11 @@ func (s *RC522Sensor) Init(data *device.InitDataDevice) error {
 
 // Unload stops the sensor polling.
 func (s *RC522Sensor) Unload() {
+	err := s.device.Close()
+	if err != nil {
+		s.logger.Error("Failed to close SPI device", err,
+			logBusIDToken, strconv.Itoa(s.Settings.BusID), logDeviceIDToken, strconv.Itoa(s.Settings.DeviceID))
+	}
 	s.stop = true
 }
 

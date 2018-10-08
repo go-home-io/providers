@@ -45,7 +45,22 @@ func (s *BME280Sensor) Init(data *device.InitDataDevice) error {
 	}
 
 	s.device = d
-	s.driver = bme280.New(s.device)
+	b := bme280.New(s.device)
+	err = b.InitWith(bme280.ModeForced, bme280.Settings{
+		Filter:                  bme280.FilterOff,
+		Standby:                 bme280.StandByTime1000ms,
+		PressureOversampling:    bme280.Oversampling16x,
+		TemperatureOversampling: bme280.Oversampling16x,
+		HumidityOversampling:    bme280.Oversampling16x,
+	})
+
+	if err != nil {
+		s.logger.Error("Failed to init BME device", err, logI2CIDToken, strconv.Itoa(s.Settings.DeviceID))
+		s.Unload()
+		return err
+	}
+
+	s.driver = b
 	s.state = &device.SensorState{
 		SensorType: enums.SenTemperature,
 	}
