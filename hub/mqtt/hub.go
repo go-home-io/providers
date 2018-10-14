@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
+	"github.com/pkg/errors"
 )
 
 // MQTTHub implements hub interface.

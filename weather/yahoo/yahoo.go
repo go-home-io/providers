@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/go-home-io/server/plugins/common"
@@ -9,6 +8,7 @@ import (
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/koron/go-dproxy"
+	"github.com/pkg/errors"
 	"github.com/sndnvaps/yahoo_weather_api"
 )
 
@@ -27,7 +27,11 @@ func (w *YahooWeather) Init(data *device.InitDataDevice) error {
 	w.uom = data.UOM
 
 	_, err := w.getProxy()
-	return err
+	if err != nil {
+		return errors.Wrap(err, "get proxy failed")
+	}
+
+	return nil
 }
 
 // Unload is not used.
@@ -62,7 +66,7 @@ func (w *YahooWeather) Load() (*device.WeatherState, error) {
 func (w *YahooWeather) Update() (st *device.WeatherState, e error) {
 	proxy, err := w.getProxy()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get proxy failed")
 	}
 
 	w.state = &device.WeatherState{}

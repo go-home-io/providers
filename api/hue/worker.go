@@ -15,6 +15,7 @@ import (
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/julienschmidt/httprouter"
+	"github.com/pkg/errors"
 )
 
 // Init plugin on worker node.
@@ -34,13 +35,13 @@ func (e *HueEmulator) initWorker(*api.InitDataAPI) error {
 	})
 
 	if err != nil {
-		return err
+		return errors.Wrap(err, "tcp bind failed")
 	}
 
 	e.listener = l
 	err = e.upnp.Start()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "upnp start failed")
 	}
 
 	router := httprouter.New()
@@ -57,7 +58,7 @@ func (e *HueEmulator) initWorker(*api.InitDataAPI) error {
 	}()
 	err = e.communicator.Subscribe(e.chCommands)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "bus subscription failed")
 	}
 
 	go e.workerCycle(e.chCommands)
@@ -128,6 +129,7 @@ func (e *HueEmulator) getDeviceInfo(w http.ResponseWriter, _ *http.Request, para
 }
 
 // Updates device state API. Sends command message to master.
+//noinspection GoUnhandledErrorResult
 func (e *HueEmulator) setDeviceState(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	defer r.Body.Close()
 	req := &StateCmd{}

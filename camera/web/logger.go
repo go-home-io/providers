@@ -1,10 +1,9 @@
 package main
 
 import (
-	"errors"
-
 	"github.com/bdlm/log"
 	"github.com/go-home-io/server/plugins/common"
+	"github.com/pkg/errors"
 )
 
 // Custom formatter implementation for the Chrome library.

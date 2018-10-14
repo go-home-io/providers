@@ -8,6 +8,7 @@ import (
 	"github.com/ericchiang/k8s/apis/core/v1"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/config"
+	"github.com/pkg/errors"
 )
 
 // K8SConfigProvider descries k8s-config-map configs plugin implementation.
@@ -24,7 +25,7 @@ func (c *K8SConfigProvider) Init(data *config.InitDataConfig) error {
 	client, err := k8s.NewInClusterClient()
 	if err != nil {
 		data.Logger.Error("Failed to connect to k8s API server", err)
-		return err
+		return errors.Wrap(err, "k8s is not available")
 	}
 
 	cm, ok := data.Options["config-map"]
@@ -55,7 +56,8 @@ func (c *K8SConfigProvider) Load() chan []byte {
 
 	err := c.k8sClient.Get(context.Background(), c.Namespace, c.ConfigMapName, &cm)
 	if err != nil {
-		c.logger.Error("Failed to get config map", err, "config-map", c.ConfigMapName, "namespace", c.Namespace)
+		c.logger.Error("Failed to get config map", err,
+			"config-map", c.ConfigMapName, "namespace", c.Namespace)
 		return nil
 	}
 	dataChan := make(chan []byte)
@@ -66,7 +68,8 @@ func (c *K8SConfigProvider) Load() chan []byte {
 				continue
 			}
 
-			c.logger.Info("Processing config map entry", "name", k, "config-map", c.ConfigMapName, "namespace", c.Namespace)
+			c.logger.Info("Processing config map entry", "name", k,
+				"config-map", c.ConfigMapName, "namespace", c.Namespace)
 			dataChan <- []byte(v)
 		}
 

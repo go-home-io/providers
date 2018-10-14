@@ -8,6 +8,7 @@ import (
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/gobwas/glob"
+	"github.com/pkg/errors"
 )
 
 // Init plugin on master node.
@@ -15,7 +16,7 @@ func (e *HueEmulator) initMaster(data *api.InitDataAPI) error {
 	_, chUpdate := data.FanOut.SubscribeDeviceUpdates()
 	err := e.communicator.Subscribe(e.chCommands)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "subscription failed")
 	}
 	go e.masterCycle(chUpdate, e.chCommands)
 	return nil

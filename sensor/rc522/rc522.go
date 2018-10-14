@@ -12,6 +12,7 @@ import (
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/jdevelop/golang-rpi-extras/rf522"
 	"github.com/jdevelop/golang-rpi-extras/rf522/commands"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -43,7 +44,7 @@ func (s *RC522Sensor) Init(data *device.InitDataDevice) error {
 	d, err := rf522.MakeRFID(s.Settings.BusID, s.Settings.DeviceID,
 		1000000, s.Settings.ResetPin, s.Settings.IRQPin)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "device init failed")
 	}
 
 	s.device = d
@@ -92,6 +93,12 @@ func (s *RC522Sensor) Update() (*device.SensorState, error) {
 // Data poll from the device.
 func (s *RC522Sensor) readData() {
 	for {
+		// We could've received stop command while sleeping.
+		// No need for additional panic.
+		if s.stop {
+			return
+		}
+
 		data := s.waitRead()
 		if s.stop {
 			return
@@ -100,6 +107,10 @@ func (s *RC522Sensor) readData() {
 		if 0 == len(data) || nil == data {
 			continue
 		}
+
+		s.dataReceived(data)
+		// We don't want to record every single tick
+		time.Sleep(1 * time.Second)
 	}
 }
 

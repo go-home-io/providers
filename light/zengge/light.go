@@ -7,6 +7,7 @@ import (
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
+	"github.com/pkg/errors"
 	"github.com/vikstrous/zengge-lightcontrol/control"
 	"github.com/vikstrous/zengge-lightcontrol/local"
 )
@@ -55,14 +56,14 @@ func (z *ZenggeLight) GetSpec() *device.Spec {
 func (z *ZenggeLight) Load() (*device.LightState, error) {
 	transport, err := local.NewTransport(fmt.Sprintf("%s:%d", z.Settings.LightIP, devicePort))
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "tcp transport failed")
 	}
 	defer transport.Close()
 	controller := &control.Controller{Transport: transport}
 	internalState, err := controller.GetState()
 
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get state failed")
 	}
 
 	z.logger.Info("Successfully connected to Zengge device", common.LogDeviceHostToken, z.Settings.LightIP)
@@ -95,13 +96,13 @@ func (z *ZenggeLight) Toggle() error {
 func (z *ZenggeLight) Update() (*device.LightState, error) {
 	transport, err := local.NewTransport(fmt.Sprintf("%s:%d", z.Settings.LightIP, devicePort))
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "tcp transport failed")
 	}
 	defer transport.Close()
 	controller := &control.Controller{Transport: transport}
 	internalState, err := controller.GetState()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get state failed")
 	}
 
 	z.updateState(internalState)
@@ -123,7 +124,7 @@ func (z *ZenggeLight) SetColor(color common.Color) error {
 	if !z.State.On {
 		err := z.On()
 		if err != nil {
-			return err
+			return errors.Wrap(err, "set color failed")
 		}
 	}
 
@@ -136,7 +137,7 @@ func (z *ZenggeLight) SetColor(color common.Color) error {
 
 	transport, err := local.NewTransport(fmt.Sprintf("%s:%d", z.Settings.LightIP, devicePort))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "tcp transport failed")
 	}
 	defer transport.Close()
 	controller := &control.Controller{Transport: transport}
@@ -145,9 +146,10 @@ func (z *ZenggeLight) SetColor(color common.Color) error {
 
 	if err != nil {
 		z.logger.Error("Failed to set color of Zengge device", err, common.LogDeviceHostToken, z.Settings.LightIP)
+		return errors.Wrap(err, "set color failed")
 	}
 
-	return err
+	return nil
 }
 
 // SetTransitionTime is not supported.
@@ -167,7 +169,7 @@ func (z *ZenggeLight) updateState(internalState *control.State) {
 func (z *ZenggeLight) setPower(isOn bool) error {
 	transport, err := local.NewTransport(fmt.Sprintf("%s:%d", z.Settings.LightIP, devicePort))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "tcp transport init failed")
 	}
 	defer transport.Close()
 	controller := &control.Controller{Transport: transport}
@@ -176,7 +178,8 @@ func (z *ZenggeLight) setPower(isOn bool) error {
 	if err != nil {
 		z.logger.Error("Failed to set power of Zengge device", err,
 			common.LogDeviceHostToken, z.Settings.LightIP)
+		return errors.Wrap(err, "set power failed")
 	}
 
-	return err
+	return nil
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
+	"github.com/pkg/errors"
 )
 
 // HueLight describes light or group resource, exposed by HUE bridge.
@@ -84,11 +84,11 @@ func (h *HueLight) SetBrightness(percent device.GradualBrightness) error {
 
 	if err != nil {
 		h.logger.Error("Failed to set HUE brightness", err, common.LogDeviceNameToken, h.ID)
-	} else {
-		h.performActualUpdate(true)
+		return errors.Wrap(err, "set brightness failed")
 	}
 
-	return err
+	h.performActualUpdate(true)
+	return nil
 }
 
 // On makes an attempt to turn device on.
@@ -103,12 +103,12 @@ func (h *HueLight) On() error {
 
 	if err != nil {
 		h.logger.Error("Failed to turn on HUE", err, common.LogDeviceNameToken, h.ID)
-	} else {
-		h.state.On = !h.state.On
-		h.performActualUpdate(true)
+		return errors.Wrap(err, "on failed")
 	}
 
-	return err
+	h.state.On = !h.state.On
+	h.performActualUpdate(true)
+	return nil
 }
 
 // Off makes an attempt to turn device off.
@@ -123,12 +123,12 @@ func (h *HueLight) Off() error {
 
 	if err != nil {
 		h.logger.Error("Failed to turn off HUE", err, common.LogDeviceNameToken, h.ID)
-	} else {
-		h.state.On = !h.state.On
-		h.performActualUpdate(true)
+		return errors.Wrap(err, "off failed")
 	}
 
-	return err
+	h.state.On = !h.state.On
+	h.performActualUpdate(true)
+	return nil
 }
 
 // Toggle makes an attempt to toggle device state.
@@ -150,12 +150,12 @@ func (h *HueLight) Toggle() error {
 
 	if err != nil {
 		h.logger.Error("Failed to toggle HUE", err, common.LogDeviceNameToken, h.ID)
-	} else {
-		h.state.On = !h.state.On
-		h.performActualUpdate(true)
+		return errors.Wrap(err, "toggle failed")
 	}
 
-	return err
+	h.state.On = !h.state.On
+	h.performActualUpdate(true)
+	return nil
 }
 
 // SetScene makes an attempt to set device scene.
@@ -169,7 +169,7 @@ func (h *HueLight) SetScene(str common.String) error {
 		if scene, ok := h.sharedObjects.scenes[id]; ok {
 			err := scene.Scene.Recall(h.InternalID)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "set scene failed")
 			}
 
 			h.performActualUpdate(true)
@@ -211,7 +211,7 @@ func (h *HueLight) SetColor(color common.Color) error {
 
 	if err != nil {
 		h.logger.Error("Failed to set HUE color", err, common.LogDeviceNameToken, h.ID)
-		return err
+		return errors.Wrap(err, "color set failed")
 	}
 
 	h.performActualUpdate(true)
@@ -293,7 +293,7 @@ func (h *HueLight) setState(state *huego.State) {
 // Processes received HUE state.
 func (h *HueLight) processUpdate(state *huego.State) {
 	h.state.On = state.On
-	h.state.TransitionTime = state.TransitionTime
+	h.state.TransitionTime = int(state.TransitionTime)
 	h.state.BrightnessPercent = uint8((float32(state.Bri) * 100.0) / float32(brightnessMax))
 
 	if len(state.Xy) > 1 {

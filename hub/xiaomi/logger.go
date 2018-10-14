@@ -1,10 +1,10 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/go-home-io/server/plugins/common"
+	"github.com/pkg/errors"
 )
 
 // Implements internal logger.

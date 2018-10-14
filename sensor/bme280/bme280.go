@@ -11,6 +11,7 @@ import (
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/maciej/bme280"
+	"github.com/pkg/errors"
 	"golang.org/x/exp/io/i2c"
 )
 
@@ -41,7 +42,7 @@ func (s *BME280Sensor) Init(data *device.InitDataDevice) error {
 
 	if err != nil {
 		s.logger.Error("Failed to init I2C device", err, logI2CIDToken, strconv.Itoa(s.Settings.DeviceID))
-		return err
+		return errors.Wrap(err, "device init failed")
 	}
 
 	s.device = d
@@ -57,7 +58,7 @@ func (s *BME280Sensor) Init(data *device.InitDataDevice) error {
 	if err != nil {
 		s.logger.Error("Failed to init BME device", err, logI2CIDToken, strconv.Itoa(s.Settings.DeviceID))
 		s.Unload()
-		return err
+		return errors.Wrap(err, "driver init failed")
 	}
 
 	s.driver = b
@@ -98,11 +99,12 @@ func (s *BME280Sensor) Update() (*device.SensorState, error) {
 	data, err := s.driver.Read()
 	if err != nil {
 		s.logger.Error("Error reading I2C device", err, logI2CIDToken, strconv.Itoa(s.Settings.DeviceID))
-		return nil, err
+		return nil, errors.Wrap(err, "i2c read failed")
 	}
 
 	s.state.Humidity = data.Humidity
 	s.state.Temperature = helpers.UOMConvert(data.Temperature, enums.PropTemperature, enums.UOMMetric, s.uom)
 	s.state.Humidity = helpers.UOMConvert(data.Humidity, enums.PropHumidity, enums.UOMMetric, s.uom)
+	s.state.Pressure = helpers.UOMConvert(data.Pressure, enums.PropPressure, enums.UOMMetric, s.uom)
 	return s.state, nil
 }

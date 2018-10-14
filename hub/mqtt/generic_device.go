@@ -10,6 +10,7 @@ import (
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
+	"github.com/pkg/errors"
 )
 
 // Mapper for command with corresponding topic and
@@ -176,7 +177,7 @@ func (m *mqttDevice) command(cmd enums.Command) error {
 	if err != nil {
 		m.logger.Error("Failed to format received mqtt property", err,
 			common.LogDeviceCommandToken, cmd.String())
-		return err
+		return errors.Wrap(err, "command failed")
 	}
 
 	m.client.Publish(cmdMap.topic, m.settings.Qos, m.settings.Retained, val)

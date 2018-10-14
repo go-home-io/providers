@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -10,6 +9,7 @@ import (
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
+	"github.com/pkg/errors"
 )
 
 // HueHub describes HUE hub state.
@@ -148,7 +148,7 @@ func (h *HueHub) authenticate() error {
 	if h.sharedObjects.settings.BridgeIP == "" {
 		err = h.registerOrLogin()
 		if err != nil {
-			return err
+			return errors.Wrap(err, "auth failed")
 		}
 	} else {
 		h.bridge = huego.New(h.sharedObjects.settings.BridgeIP,
@@ -171,7 +171,7 @@ func (h *HueHub) registerOrLogin() error {
 	h.bridge, err = huego.Discover()
 	if err != nil {
 		h.logger.Error("HUE discovery failed", err)
-		return err
+		return errors.Wrap(err, "discovery failed")
 	}
 
 	secretName := fmt.Sprintf("hue-hub-%s", h.bridge.Host)
@@ -195,7 +195,7 @@ func (h *HueHub) registerOrLogin() error {
 	if err != nil {
 		h.logger.Error("HUE registration failed, make sure link button was pressed", err,
 			common.LogDeviceHostToken, h.bridge.Host)
-		return err
+		return errors.Wrap(err, "registration failed")
 	}
 
 	h.logger.Info("Successfully registered a new USER", common.LogDeviceHostToken, h.bridge.Host)

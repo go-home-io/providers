@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"sync"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
+	"github.com/pkg/errors"
 	"github.com/vkorn/go-miio"
 )
 
@@ -69,7 +69,7 @@ func (v *XiaomiVacuum) Load() (*device.VacuumState, error) {
 	}
 	vac, err := miio.NewVacuum(v.Settings.IP, v.Settings.Key)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "vacuum init failed")
 	}
 
 	v.vacuum = vac

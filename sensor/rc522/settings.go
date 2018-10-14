@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/hex"
-	"errors"
+
+	"github.com/pkg/errors"
 )
 
 // Settings has data required to start RFID reader.

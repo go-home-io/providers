@@ -6,6 +6,7 @@ import (
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
+	"github.com/pkg/errors"
 )
 
 // MQTTSwitch implements switch interface.
@@ -51,7 +52,7 @@ func (m *MQTTSwitch) Load() (*device.SwitchState, error) {
 func (m *MQTTSwitch) On() error {
 	err := m.command(enums.CmdOn)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "on command failed")
 	}
 
 	if m.settings.Pessimistic {
@@ -66,7 +67,7 @@ func (m *MQTTSwitch) On() error {
 func (m *MQTTSwitch) Off() error {
 	err := m.command(enums.CmdOff)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "off command failed")
 	}
 
 	if !m.settings.Pessimistic {

@@ -3,12 +3,12 @@
 package main
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/gobwas/glob"
+	"github.com/pkg/errors"
 )
 
 // Describes possible logic.
@@ -64,13 +64,13 @@ func (s *Settings) Validate() error {
 		var err error
 		v.deviceRegexp, err = glob.Compile(v.Device)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "glob compile failed")
 		}
 
 		if "" != v.Mapper {
 			exp, err := s.parser.Compile(v.Mapper)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "parser compile failed")
 			}
 
 			v.mapperExpr = exp
@@ -79,7 +79,7 @@ func (s *Settings) Validate() error {
 
 		v.State, err = helpers.PropertyFixYaml(v.State, v.Property)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "fix yaml failed")
 		}
 	}
 

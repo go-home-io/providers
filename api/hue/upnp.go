@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/julienschmidt/httprouter"
+	"github.com/pkg/errors"
 	"golang.org/x/net/ipv4"
 )
 
@@ -33,7 +33,7 @@ func (d *discoverUPNP) Start() error {
 
 	if err != nil {
 		d.logger.Error("Failed to start UPNP server", err)
-		return err
+		return errors.Wrap(err, "upnp start failed")
 	}
 
 	d.connection = l
@@ -42,7 +42,7 @@ func (d *discoverUPNP) Start() error {
 	interfaces, err := net.Interfaces()
 	if err != nil {
 		d.logger.Error("No available interfaces", err)
-		return err
+		return errors.Wrap(err, "no interface available")
 	}
 
 	addr := &net.UDPAddr{
@@ -108,6 +108,7 @@ func (d *discoverUPNP) listen() {
 }
 
 // Responds to discovery message with advertising address.
+//noinspection GoUnhandledErrorResult
 func (d *discoverUPNP) discoveryRespond(addr *net.UDPAddr) {
 	c, err := net.DialUDP("udp", nil, addr)
 	if err != nil {

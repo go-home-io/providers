@@ -8,6 +8,7 @@ import (
 	"github.com/go-home-io/server/plugins/bus"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/nsqio/go-nsq"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -36,14 +37,18 @@ func (b *NsqBus) Init(data *bus.InitDataServiceBus) error {
 	var err error
 	b.producer, err = nsq.NewProducer(b.Settings.ServerAddress, b.config)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "producer init failed")
 	}
 
 	b.logger = data.Logger
 	b.producer.SetLogger(&nsqLogger{logger: data.Logger}, nsqLogLevel)
 
 	err = b.producer.Ping()
-	return err
+	if err != nil {
+		return errors.Wrap(err, "ping failed")
+	}
+
+	return nil
 }
 
 // Subscribe makes an attempts to subscribe to NSQ topic.
@@ -60,7 +65,7 @@ func (b *NsqBus) Subscribe(channel string, queue chan bus.RawMessage) error {
 	q, err := nsq.NewConsumer(channel, "gh", b.config)
 	if err != nil {
 		b.logger.Error("Failed to subscribe to the channel", err, common.LogChannelToken, channel)
-		return err
+		return errors.Wrap(err, "consumer init failed")
 	}
 
 	q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
@@ -84,7 +89,7 @@ func (b *NsqBus) Subscribe(channel string, queue chan bus.RawMessage) error {
 	err = q.ConnectToNSQD(b.Settings.ServerAddress)
 	if err != nil {
 		b.logger.Error("Failed to connect to nsq while subscribing", err, common.LogChannelToken, channel)
-		return err
+		return errors.Wrap(err, "connection to bus failed")
 	}
 
 	b.logger.Debug("Successfully subscribed to nsq channel", common.LogChannelToken, channel)
@@ -128,7 +133,8 @@ func (b *NsqBus) Ping() error {
 	err := b.producer.Ping()
 	if err != nil {
 		b.logger.Error("Service bus is down", err)
+		return errors.Wrap(err, "ping failed")
 	}
 
-	return err
+	return nil
 }

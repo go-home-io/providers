@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/gobwas/glob"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -46,7 +47,7 @@ func (s *Settings) Validate() error {
 	for _, v := range s.DeviceFilter {
 		a, err := glob.Compile(v)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "glob compile failed")
 		}
 
 		s.devRegexp = append(s.devRegexp, a)

@@ -6,6 +6,8 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lunixbochs/struc v0.0.0-20180408203800-02e4c2afbb2a // indirect
 	github.com/nickw444/miio-go v0.0.0-20180729083032-52b65c4114f1 // indirect
+	github.com/pkg/errors v0.8.0
+	github.com/sirupsen/logrus v1.1.1 // indirect
 	github.com/vkorn/go-miio v0.0.0-20180929223642-adf1adb6425f
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )

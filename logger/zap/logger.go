@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/go-home-io/server/plugins/logger"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -54,10 +55,10 @@ func (l *ZapLogger) Init(data *logger.InitDataLogger) error {
 		ErrorOutputPaths: l.Settings.Targets.Error,
 	}
 
-	z, err := zConfig.Build(zap.AddCallerSkip(2),
+	z, err := zConfig.Build(zap.AddCallerSkip(data.SkipLevel),
 		zap.AddStacktrace(zap.ErrorLevel))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "zap build failed")
 	}
 	l.logger = z
 	return nil

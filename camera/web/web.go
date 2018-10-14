@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/base64"
-	"errors"
 	"sync"
 	"time"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/mkenney/go-chrome/tot"
 	"github.com/mkenney/go-chrome/tot/emulation"
 	"github.com/mkenney/go-chrome/tot/page"
+	"github.com/pkg/errors"
 )
 
 // WebCamera describes web page screenshot camera.
@@ -48,11 +48,16 @@ func (c *WebCamera) Init(data *device.InitDataDevice) error {
 		"", "", "", "")
 
 	err := c.openTab()
-	if err == nil && c.Settings.ReloadInterval > 0 {
+
+	if err != nil {
+		return errors.Wrap(err, "open tab failed")
+	}
+
+	if c.Settings.ReloadInterval > 0 {
 		go c.reloadTab()
 	}
 
-	return err
+	return nil
 }
 
 // Unload closes remote tab.
@@ -89,7 +94,7 @@ func (c *WebCamera) Load() (*device.CameraState, error) {
 func (c *WebCamera) Update() (*device.CameraState, error) {
 	err := c.getPicture()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get picture failed")
 	}
 
 	return c.state, nil
@@ -101,6 +106,7 @@ func (c *WebCamera) TakePicture() error {
 }
 
 // Reloads tab if reloadInterval is specified.
+//noinspection GoUnhandledErrorResult
 func (c *WebCamera) reloadTab() {
 	tick := time.Tick(time.Duration(c.Settings.ReloadInterval) * time.Minute)
 	for {
@@ -122,12 +128,12 @@ func (c *WebCamera) openTab() error {
 	t, err := c.browser.NewTab(c.Settings.Address)
 	if err != nil {
 		c.Logger.Error("Failed to open a new tab", err, common.LogURLToken, c.Settings.Address)
-		return err
+		return errors.Wrap(err, "open tab failed")
 	}
 	enableResult := <-t.Page().Enable()
 	if nil != enableResult.Err {
 		c.Logger.Error("Failed to enable chrome tab", enableResult.Err, common.LogURLToken, c.Settings.Address)
-		return err
+		return errors.Wrap(err, "enable tab failed")
 	}
 
 	loadComplete := make(chan bool)
@@ -163,6 +169,8 @@ func (c *WebCamera) openTab() error {
 	}
 }
 
+// Handles errors occurred in a tab.
+//noinspection GoUnhandledErrorResult
 func (c *WebCamera) handleTabErrors() {
 	select {
 	case err := <-c.tab.Socket().Errors():
@@ -178,7 +186,7 @@ func (c *WebCamera) handleTabErrors() {
 	}
 }
 
-// Closes opened tab
+// Closes opened tab.
 func (c *WebCamera) closeTab() {
 	c.Lock()
 	defer c.Unlock()
@@ -196,6 +204,7 @@ func (c *WebCamera) closeTab() {
 }
 
 // Takes a screenshot.
+//noinspection GoUnhandledErrorResult
 func (c *WebCamera) getPicture() error {
 	if nil == c.tab {
 		go c.openTab()
@@ -206,10 +215,11 @@ func (c *WebCamera) getPicture() error {
 	defer c.Unlock()
 
 	select {
-	case screen := <-c.tab.Page().CaptureScreenshot(&page.CaptureScreenshotParams{
-		Format:  page.Format.Jpeg,
-		Quality: 100,
-	}):
+	case screen := <-c.tab.Page().CaptureScreenshot(
+		&page.CaptureScreenshotParams{
+			Format:  page.Format.Jpeg,
+			Quality: 100,
+		}):
 		if screen.Err != nil {
 			c.Logger.Error("Failed to get page screenshot", screen.Err, common.LogURLToken, c.Settings.Address)
 			return screen.Err

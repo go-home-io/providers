@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	"github.com/ericchiang/k8s"
 	"github.com/ericchiang/k8s/apis/core/v1"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/secret"
+	"github.com/pkg/errors"
 )
 
 // K8SSecretsProvider descries k8s-secret secret store plugin implementation.
@@ -26,7 +26,7 @@ func (s *K8SSecretsProvider) Init(data *secret.InitDataSecret) error {
 	client, err := k8s.NewInClusterClient()
 	if err != nil {
 		data.Logger.Error("Failed to connect to k8s API server", err)
-		return err
+		return errors.Wrap(err, "k8s is not available")
 	}
 
 	sec, ok := data.Options["secret"]
@@ -46,18 +46,13 @@ func (s *K8SSecretsProvider) Init(data *secret.InitDataSecret) error {
 		s.SecretName = parts[1]
 	}
 
-	if err != nil {
-		data.Logger.Error("Failed to get secret", err)
-		return err
-	}
-
 	s.k8sClient = client
 	s.logger = data.Logger
 
 	err = s.k8sClient.Get(context.Background(), s.Namespace, s.SecretName, &s.secret)
 	if err != nil {
 		data.Logger.Error("Failed to get secret", err, "name", s.SecretName, "namespace", s.Namespace)
-		return err
+		return errors.Wrap(err, "secret get failed")
 	}
 
 	return nil
@@ -79,7 +74,7 @@ func (s *K8SSecretsProvider) Set(name string, data string) error {
 	err := s.k8sClient.Update(context.Background(), &s.secret)
 	if err != nil {
 		s.logger.Error("Failed to update secret", err, "name", s.SecretName, "namespace", s.Namespace)
-		return err
+		return errors.Wrap(err, "secret update failed")
 	}
 
 	return nil

@@ -6,6 +6,7 @@ import (
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
+	"github.com/pkg/errors"
 	"github.com/vkorn/go-miio"
 )
 
@@ -38,7 +39,7 @@ func (h *XiaomiHub) Init(data *device.InitDataDevice) error {
 
 	g, err := miio.NewGateway(h.Settings.IP, h.Settings.Key)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "gateway init failed")
 	}
 
 	h.gateway = g

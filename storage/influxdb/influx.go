@@ -9,6 +9,7 @@ import (
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/storage"
 	"github.com/influxdata/influxdb/client/v2"
+	"github.com/pkg/errors"
 )
 
 // InfluxStorage implements storage provider.
@@ -21,13 +22,14 @@ type InfluxStorage struct {
 }
 
 // Init performs initial test of influxdb connectivity.
+//noinspection GoUnhandledErrorResult
 func (i *InfluxStorage) Init(data *storage.InitDataStorage) error {
 	i.logger = data.Logger
 	i.points = make([]*client.Point, 0)
 
 	c, err := i.getClient()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "get client failed")
 	}
 
 	defer c.Close()
@@ -89,7 +91,7 @@ func (i *InfluxStorage) getClient() (client.Client, error) {
 
 	if err != nil {
 		i.logger.Error("Failed to instantiate influx client", err)
-		return nil, err
+		return nil, errors.Wrap(err, "http client init failed")
 	}
 
 	return c, nil
@@ -110,6 +112,7 @@ func (i *InfluxStorage) addPoint(deviceID string, deviceData map[string]interfac
 
 // Checks whether amount of cached points is greater than threshold and performs
 // save if yes.
+//noinspection GoUnhandledErrorResult
 func (i *InfluxStorage) checkAndSave() {
 	if len(i.points) < i.Settings.BatchSize {
 		return
