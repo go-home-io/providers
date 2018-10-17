@@ -21,4 +21,6 @@ const (
 	brightnessMax = math.MaxUint8 - 1
 	// Describes number of iterations per second when gradually adjusting brightness.
 	overtimeBrightnessStepsPerSecond = 2
+	// Log representation for light
+	logTokenLightID = "light_id"
 )

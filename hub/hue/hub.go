@@ -298,7 +298,7 @@ func (h *HueHub) loadLights() {
 
 	for _, l := range lights {
 		if !l.State.Reachable {
-			h.logger.Debug("One of the HUE lights is unreachable", common.LogDeviceNameToken, l.Name)
+			h.logger.Debug("One of the HUE lights is unreachable", logTokenLightID, l.Name)
 			continue
 		}
 

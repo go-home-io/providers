@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/eclipse/paho.mqtt.golang"
 	"strings"
 	"time"
 
-	"github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
@@ -107,13 +107,13 @@ func (m *MQTTHub) Load() (*device.HubLoadResult, error) {
 			s = newSensor(m.Settings.Prefix, m.parser, v, m.client, m.logger, m.uom)
 			state, err = s.(*MQTTSensor).Load()
 		default:
-			m.logger.Warn("This MQTT device type is unsupported", common.LogDeviceTypeToken, v.Type.String())
+			m.logger.Warn("This MQTT device type is unsupported", logTokenExpectedType, v.Type.String())
 			continue
 		}
 
 		if err != nil {
 			m.logger.Error("Failed to initialize MQTT device", err,
-				"name", v.Name, common.LogDeviceTypeToken, v.Type.String())
+				"name", v.Name, logTokenExpectedType, v.Type.String())
 			continue
 		}
 

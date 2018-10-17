@@ -119,13 +119,13 @@ func (e *HueEmulator) getDeviceInfo(w http.ResponseWriter, _ *http.Request, para
 	lightID := params.ByName("lightID")
 	for _, v := range e.devices {
 		if lightID == v.internalHash {
-			e.logger.Debug("Requested device state info", common.LogDeviceNameToken, v.DeviceID)
+			e.logger.Debug("Requested device state info", common.LogIDToken, v.DeviceID)
 			e.sendJSON(w, getDevice(v))
 			return
 		}
 	}
 
-	e.logger.Warn("Requested unknown device state info", common.LogDeviceNameToken, lightID)
+	e.logger.Warn("Requested unknown device state info", common.LogIDToken, lightID)
 }
 
 // Updates device state API. Sends command message to master.
@@ -143,7 +143,7 @@ func (e *HueEmulator) setDeviceState(w http.ResponseWriter, r *http.Request, par
 	for _, v := range e.devices {
 		if lightID == v.internalHash {
 
-			e.logger.Debug("Requested device command", common.LogDeviceNameToken, v.DeviceID)
+			e.logger.Debug("Requested device command", common.LogIDToken, v.DeviceID)
 			if req.On != nil {
 				cmd := enums.CmdOn
 				if !*req.On {

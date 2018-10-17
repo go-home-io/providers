@@ -83,7 +83,7 @@ func (h *HueLight) SetBrightness(percent device.GradualBrightness) error {
 	}
 
 	if err != nil {
-		h.logger.Error("Failed to set HUE brightness", err, common.LogDeviceNameToken, h.ID)
+		h.logger.Error("Failed to set HUE brightness", err)
 		return errors.Wrap(err, "set brightness failed")
 	}
 
@@ -102,7 +102,7 @@ func (h *HueLight) On() error {
 	}
 
 	if err != nil {
-		h.logger.Error("Failed to turn on HUE", err, common.LogDeviceNameToken, h.ID)
+		h.logger.Error("Failed to turn on HUE", err)
 		return errors.Wrap(err, "on failed")
 	}
 
@@ -122,7 +122,7 @@ func (h *HueLight) Off() error {
 	}
 
 	if err != nil {
-		h.logger.Error("Failed to turn off HUE", err, common.LogDeviceNameToken, h.ID)
+		h.logger.Error("Failed to turn off HUE", err)
 		return errors.Wrap(err, "off failed")
 	}
 
@@ -149,7 +149,7 @@ func (h *HueLight) Toggle() error {
 	}
 
 	if err != nil {
-		h.logger.Error("Failed to toggle HUE", err, common.LogDeviceNameToken, h.ID)
+		h.logger.Error("Failed to toggle HUE", err)
 		return errors.Wrap(err, "toggle failed")
 	}
 
@@ -177,7 +177,7 @@ func (h *HueLight) SetScene(str common.String) error {
 		}
 	}
 
-	h.logger.Warn("Failed to find HUE scene", common.LogDeviceNameToken, h.ID, "scene", str.Value)
+	h.logger.Warn("Failed to find HUE scene", "scene", str.Value)
 	return errors.New("scene not found")
 }
 
@@ -210,7 +210,7 @@ func (h *HueLight) SetColor(color common.Color) error {
 	}
 
 	if err != nil {
-		h.logger.Error("Failed to set HUE color", err, common.LogDeviceNameToken, h.ID)
+		h.logger.Error("Failed to set HUE color", err)
 		return errors.Wrap(err, "color set failed")
 	}
 

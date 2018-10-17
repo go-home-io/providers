@@ -12,6 +12,8 @@ func Load() (interface{}, interface{}, error) {
 }
 
 const (
-	// Log representation.
+	// Log topic representation.
 	logTokenTopic = "topic"
+	// Log expected device type representation.
+	logTokenExpectedType = "expected_type"
 )

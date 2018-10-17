@@ -74,7 +74,7 @@ func (i *InfluxStorage) History(deviceID string, hrs int) map[string]map[int64]i
 			err = r.Error()
 		}
 
-		i.logger.Error("Failed to get device history", err, common.LogDeviceNameToken, deviceID)
+		i.logger.Error("Failed to get device history", err, common.LogIDToken, deviceID)
 		return nil
 	}
 
@@ -102,7 +102,7 @@ func (i *InfluxStorage) addPoint(deviceID string, deviceData map[string]interfac
 	point, err := client.NewPoint(deviceID, tags, deviceData, now())
 
 	if err != nil {
-		i.logger.Error("Failed to create influx data point", err, common.LogDeviceNameToken, deviceID)
+		i.logger.Error("Failed to create influx data point", err, common.LogIDToken, deviceID)
 		return
 	}
 
@@ -156,18 +156,18 @@ func (i *InfluxStorage) parseInfluxResponse(r *client.Response, deviceID string)
 			timeColumn := findTimeColumn(j.Columns)
 
 			if -1 == timeColumn {
-				i.logger.Warn("Didn't find time column", common.LogDeviceNameToken, deviceID)
+				i.logger.Warn("Didn't find time column", common.LogIDToken, deviceID)
 				continue
 			}
 
 			for _, val := range j.Values {
 				if timeColumn >= len(val) || nil == val[timeColumn] || columnsLen > len(val) {
-					i.logger.Warn("Wrong influx data for device", common.LogDeviceNameToken, deviceID)
+					i.logger.Warn("Wrong influx data for device", common.LogIDToken, deviceID)
 					continue
 				}
 				t, err := val[timeColumn].(json.Number).Int64()
 				if err != nil {
-					i.logger.Warn("Wrong influx time data for device", common.LogDeviceNameToken, deviceID)
+					i.logger.Warn("Wrong influx time data for device", common.LogIDToken, deviceID)
 					continue
 				}
 

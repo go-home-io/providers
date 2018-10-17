@@ -151,7 +151,7 @@ func (t *StateTrigger) triggerOr(msg *TriggerDeviceStateUpdate, spec *DeviceEntr
 
 	t.triggered <- msg
 	t.logger.Info("Triggering due to OR logic", common.LogDevicePropertyToken, msg.Property.String(),
-		common.LogDeviceNameToken, msg.ID)
+		logTokenTargetDevice, msg.ID)
 }
 
 // Checks conditions if trigger's logic is "AND".
@@ -169,5 +169,5 @@ func (t *StateTrigger) triggerAnd(msg *TriggerDeviceStateUpdate) {
 
 	t.triggered <- msg
 	t.logger.Info("Triggering due to AND logic", common.LogDevicePropertyToken, msg.Property.String(),
-		common.LogDeviceNameToken, msg.ID)
+		logTokenTargetDevice, msg.ID)
 }

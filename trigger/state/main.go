@@ -7,3 +7,8 @@ func Load() (interface{}, interface{}, error) {
 	settings := &Settings{}
 	return &StateTrigger{Settings: settings}, settings, nil
 }
+
+const (
+	// Log representation for target device ID.
+	logTokenTargetDevice = "device_id"
+)
