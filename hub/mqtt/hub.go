@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/eclipse/paho.mqtt.golang"
 	"strings"
 	"time"
 
+	"github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-home-io/server/plugins/common"
 	"github.com/go-home-io/server/plugins/device"
 	"github.com/go-home-io/server/plugins/device/enums"
