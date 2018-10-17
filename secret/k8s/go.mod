@@ -11,3 +11,7 @@ require (
 )
 
 replace github.com/go-home-io/server => ../../../server
+
+replace golang.org/x/net => golang.org/x/net v0.0.0-20180824045131-faa378e6dbae
+
+replace github.com/sirupsen/logrus => github.com/sirupsen/logrus v1.1.1

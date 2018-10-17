@@ -13,3 +13,5 @@ require (
 replace github.com/go-home-io/server => ../../../server
 
 replace golang.org/x/sys => golang.org/x/sys v0.0.0-20180821140842-3b58ed4ad339
+
+replace golang.org/x/crypto => golang.org/x/crypto v0.0.0-20180820150726-614d502a4dac

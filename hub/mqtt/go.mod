@@ -8,3 +8,5 @@ require (
 )
 
 replace github.com/go-home-io/server => ../../../server
+
+replace golang.org/x/net => golang.org/x/net v0.0.0-20180824045131-faa378e6dbae
