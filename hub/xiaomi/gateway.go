@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/vkorn/go-miio"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
 )
 
 // Defines Xiaomi hub's LED light.

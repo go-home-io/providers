@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/go-home-io/server/plugins/common"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
 )
 
 // Implements internal logger.

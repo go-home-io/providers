@@ -1,5 +1,3 @@
-// +build linux,arm
-
 package main
 
 import (
@@ -7,13 +5,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
-	"github.com/jdevelop/golang-rpi-extras/rf522"
-	"github.com/jdevelop/golang-rpi-extras/rf522/commands"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
+	"periph.io/x/periph/experimental/devices/mfrc522"
+	"periph.io/x/periph/experimental/devices/mfrc522/commands"
+	"periph.io/x/periph/host/sysfs"
 )
 
 const (
@@ -30,7 +28,8 @@ type RC522Sensor struct {
 	state    *device.SensorState
 
 	update chan *device.StateUpdateData
-	device *rf522.RFID
+	bus    *sysfs.SPI
+	device *mfrc522.Dev
 	stop   bool
 }
 
@@ -39,16 +38,22 @@ func (s *RC522Sensor) Init(data *device.InitDataDevice) error {
 	s.update = data.DeviceStateUpdateChan
 	s.logger = data.Logger
 
-	logrus.SetFormatter(&fakeLogger{})
-
-	d, err := rf522.MakeRFID(s.Settings.BusID, s.Settings.DeviceID,
-		1000000, s.Settings.ResetPin, s.Settings.IRQPin)
+	b, err := sysfs.NewSPI(s.Settings.BusID, s.Settings.DeviceID)
 	if err != nil {
+		return errors.Wrap(err, "bus init failed")
+	}
+
+	s.bus = b
+	// TODO: Need a PR
+	//s.device.SetAntennaGain(s.Settings.AntennaGain)
+
+	d, err := mfrc522.NewSPI(s.bus, s.Settings.rstGPIO, s.Settings.irqGPIO)
+	if err != nil {
+		s.closeBus()
 		return errors.Wrap(err, "device init failed")
 	}
 
 	s.device = d
-	s.device.SetAntennaGain(s.Settings.AntennaGain)
 	s.state = &device.SensorState{
 		On:         false,
 		SensorType: enums.SenPresence,
@@ -58,11 +63,14 @@ func (s *RC522Sensor) Init(data *device.InitDataDevice) error {
 
 // Unload stops the sensor polling.
 func (s *RC522Sensor) Unload() {
-	err := s.device.Close()
+	// TODO: Need a PR to stop Wait cycle
+	err := s.device.Halt()
 	if err != nil {
 		s.logger.Error("Failed to close SPI device", err,
 			logBusIDToken, strconv.Itoa(s.Settings.BusID), logDeviceIDToken, strconv.Itoa(s.Settings.DeviceID))
 	}
+
+	s.closeBus()
 	s.stop = true
 }
 
@@ -111,6 +119,15 @@ func (s *RC522Sensor) readData() {
 		s.dataReceived(data)
 		// We don't want to record every single tick
 		time.Sleep(1 * time.Second)
+	}
+}
+
+// Closes SPI bus
+func (s *RC522Sensor) closeBus() {
+	err := s.bus.Close()
+	if err != nil {
+		s.logger.Error("Failed to close SPI bus", err,
+			logBusIDToken, strconv.Itoa(s.Settings.BusID), logDeviceIDToken, strconv.Itoa(s.Settings.DeviceID))
 	}
 }
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device/enums"
-	"github.com/go-home-io/server/plugins/helpers"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device/enums"
+	"go-home.io/x/server/plugins/helpers"
 )
 
 // Transforms device-specific property into ON/OFF status.

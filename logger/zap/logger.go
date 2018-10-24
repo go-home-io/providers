@@ -3,10 +3,10 @@ package main
 import (
 	"sync"
 
-	"github.com/go-home-io/server/plugins/logger"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"go-home.io/x/server/plugins/logger"
 )
 
 // ZapLogger describes ZAP logger implementation.

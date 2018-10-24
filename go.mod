@@ -1,1 +1,1 @@
-module github.com/go-home-io/providers
+module go-home.io/x/providers

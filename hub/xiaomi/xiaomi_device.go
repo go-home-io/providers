@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/go-home-io/server/plugins/device"
+	"go-home.io/x/server/plugins/device"
 )
 
 // Defines device type.

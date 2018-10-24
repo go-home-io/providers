@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/pkg/errors"
 	"github.com/vikstrous/zengge-lightcontrol/control"
 	"github.com/vikstrous/zengge-lightcontrol/local"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
 )
 
 // ZenggeLight describes Zengge device.

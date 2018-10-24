@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-home-io/server/plugins/bus"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/nsqio/go-nsq"
 	"github.com/pkg/errors"
+	"github.com/nsqio/go-nsq"
+	"go-home.io/x/server/plugins/bus"
+	"go-home.io/x/server/plugins/common"
 )
 
 const (

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/go-home-io/server/plugins/common"
+	"go-home.io/x/server/plugins/common"
 )
 
 // Override for nsq default logger.

@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	"github.com/amimof/huego"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
 )
 
 // HueHub describes HUE hub state.

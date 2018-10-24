@@ -3,9 +3,9 @@ package main
 import (
 	"math"
 
-	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/gobwas/glob"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/device/enums"
 )
 
 const (

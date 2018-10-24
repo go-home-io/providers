@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/storage"
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/storage"
 )
 
 // InfluxStorage implements storage provider.

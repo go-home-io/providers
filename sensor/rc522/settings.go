@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/hex"
+	"fmt"
 
 	"github.com/pkg/errors"
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
 // Settings has data required to start RFID reader.
@@ -18,8 +21,11 @@ type Settings struct {
 	Users       map[string]string `yaml:"users" validate:"required,min=1"`
 	Key         string            `yaml:"key" validate:"required,len=12"`
 
-	encKey []byte
+	encKey [6]byte
 	users  map[string][]byte
+
+	rstGPIO gpio.PinIO
+	irqGPIO gpio.PinIO
 }
 
 // Validate checks settings.
@@ -40,10 +46,21 @@ func (s *Settings) Validate() error {
 	}
 
 	d, err := hex.DecodeString(s.Key)
-	if err != nil {
+	if err != nil || 6 != len(d) {
 		return errors.New("key must be 6 bytes long")
 	}
 
-	s.encKey = d
+	copy(s.encKey[:], d)
+
+	s.rstGPIO = gpioreg.ByName(fmt.Sprintf("P1_%d", s.ResetPin))
+	if nil == s.rstGPIO {
+		return errors.New("incorrect reset pin")
+	}
+
+	s.irqGPIO = gpioreg.ByName(fmt.Sprintf("P1_%d", s.IRQPin))
+	if nil == s.irqGPIO {
+		return errors.New("incorrect irq pin")
+	}
+
 	return nil
 }

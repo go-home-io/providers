@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/go-home-io/server/plugins/api"
-	"github.com/go-home-io/server/plugins/device/enums"
+	"go-home.io/x/server/plugins/api"
+	"go-home.io/x/server/plugins/device/enums"
 )
 
 // DeviceUpdateMessage has data about device update.

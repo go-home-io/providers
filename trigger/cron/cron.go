@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/trigger"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/trigger"
 )
 
 // CronTrigger implements cron trigger interface.

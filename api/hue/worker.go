@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-home-io/server/plugins/api"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device/enums"
-	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/julienschmidt/httprouter"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/api"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device/enums"
+	"go-home.io/x/server/plugins/helpers"
 )
 
 // Init plugin on worker node.

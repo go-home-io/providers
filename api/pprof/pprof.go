@@ -4,7 +4,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"github.com/go-home-io/server/plugins/api"
+	"go-home.io/x/server/plugins/api"
 )
 
 // PprofAPI is a pprof wrapper.

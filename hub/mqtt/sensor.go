@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/eclipse/paho.mqtt.golang"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
-	"github.com/go-home-io/server/plugins/helpers"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
+	"go-home.io/x/server/plugins/helpers"
 )
 
 // MQTTSensor implements sensor interface.

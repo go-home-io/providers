@@ -3,7 +3,7 @@ package main
 import (
 	"math"
 
-	"github.com/go-home-io/server/plugins/common"
+	"go-home.io/x/server/plugins/common"
 )
 
 // Converts RGB color into CIE.

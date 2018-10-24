@@ -6,9 +6,9 @@ import (
 
 	"github.com/ericchiang/k8s"
 	"github.com/ericchiang/k8s/apis/core/v1"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/secret"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/secret"
 )
 
 // K8SSecretsProvider descries k8s-secret secret store plugin implementation.

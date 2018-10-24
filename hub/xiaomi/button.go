@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
 	"github.com/vkorn/go-miio"
 )
 

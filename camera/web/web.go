@@ -7,14 +7,14 @@ import (
 
 	errs "github.com/bdlm/errors"
 	"github.com/bdlm/log"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
 	"github.com/mkenney/go-chrome/codes"
 	"github.com/mkenney/go-chrome/tot"
 	"github.com/mkenney/go-chrome/tot/emulation"
 	"github.com/mkenney/go-chrome/tot/page"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
 )
 
 // WebCamera describes web page screenshot camera.

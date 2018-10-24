@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/go-home-io/server/plugins/device"
-	"github.com/go-home-io/server/plugins/device/enums"
-	"github.com/go-home-io/server/plugins/helpers"
 	"github.com/vkorn/go-miio"
+	"go-home.io/x/server/plugins/device"
+	"go-home.io/x/server/plugins/device/enums"
+	"go-home.io/x/server/plugins/helpers"
 )
 
 // Defines Xiaomi humidity/temperature sensor.

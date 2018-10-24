@@ -6,9 +6,9 @@ import (
 
 	"github.com/ericchiang/k8s"
 	"github.com/ericchiang/k8s/apis/core/v1"
-	"github.com/go-home-io/server/plugins/common"
-	"github.com/go-home-io/server/plugins/config"
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
+	"go-home.io/x/server/plugins/config"
 )
 
 // K8SConfigProvider descries k8s-config-map configs plugin implementation.

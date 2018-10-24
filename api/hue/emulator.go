@@ -4,8 +4,8 @@ import (
 	"net"
 	"sync"
 
-	"github.com/go-home-io/server/plugins/api"
-	"github.com/go-home-io/server/plugins/common"
+	"go-home.io/x/server/plugins/api"
+	"go-home.io/x/server/plugins/common"
 )
 
 // HueEmulator implements extended API plugin and
@@ -48,6 +48,7 @@ func (e *HueEmulator) Routes() []string {
 }
 
 // Unload stops internal processing cycles.
+//noinspection GoUnhandledErrorResult
 func (e *HueEmulator) Unload() {
 	close(e.chCommands)
 
