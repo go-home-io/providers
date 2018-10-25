@@ -7,7 +7,7 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/sirupsen/logrus v1.1.1 // indirect
 	github.com/vkorn/go-miio v0.0.0-20180929223642-adf1adb6425f
-	go-home.io/x/server/plugins v0.0.0-20181025003827-3ceb9900099c
+	go-home.io/x/server/plugins v0.0.0-20181025030525-18e916b213bc
 )
 
 replace go-home.io/x/server/plugins => ../../../server/plugins

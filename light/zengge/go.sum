@@ -1,4 +1,4 @@
-github.com/Knetic/govaluate v3.0.0+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
+github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
@@ -18,8 +18,6 @@ github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/vikstrous/zengge-lightcontrol v0.0.0-20170104042503-6613d030df9f h1:yTgt/+whQhnEziKHdpQpCKKWIkWuFgGetEI2QnsC5fc=
 github.com/vikstrous/zengge-lightcontrol v0.0.0-20170104042503-6613d030df9f/go.mod h1:DuVpuq3v/B5raOGwLTos6VEuw36lacJxdrbEo0rIw0U=
-go-home.io/x/server/plugins v0.0.0-20181025003827-3ceb9900099c h1:3GKOqgbTsCfcWdQiShIWEAgO7DQUPJGSq+BMBxvKcVM=
-go-home.io/x/server/plugins v0.0.0-20181025003827-3ceb9900099c/go.mod h1:Fcyb4DVLFuR6jo79b+EZwh9TobrUXRwUxR62rqUH+p4=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.1 h1:mUhvW9EsL+naU5Q3cakzfE91YhliOondGd6ZrsDBHQE=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/websocket v1.3.0 // indirect
 	github.com/mkenney/go-chrome v1.0.0-rc6
 	github.com/pkg/errors v0.8.0
-	go-home.io/x/server/plugins v0.0.0-20181025003827-3ceb9900099c
+	go-home.io/x/server/plugins v0.0.0-20181025030525-18e916b213bc
 	golang.org/x/crypto v0.0.0-20180904163835-0709b304e793 // indirect
 	golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33 // indirect
 )
