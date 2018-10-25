@@ -3,9 +3,9 @@ package main
 import (
 	"time"
 
+	"github.com/vkorn/go-miio"
 	"go-home.io/x/server/plugins/device"
 	"go-home.io/x/server/plugins/device/enums"
-	"github.com/vkorn/go-miio"
 )
 
 // Defines Xiaomi switch.

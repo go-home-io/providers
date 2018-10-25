@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/nsqio/go-nsq"
+	"github.com/pkg/errors"
 	"go-home.io/x/server/plugins/bus"
 	"go-home.io/x/server/plugins/common"
 )

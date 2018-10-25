@@ -4,9 +4,9 @@ import (
 	"sync"
 
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"go-home.io/x/server/plugins/logger"
 )
 
 // ZapLogger describes ZAP logger implementation.
