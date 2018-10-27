@@ -33,7 +33,7 @@ func (t *CronTrigger) Init(data *trigger.InitDataTrigger) error {
 func (t *CronTrigger) wait() {
 	for {
 		t.logger.Info("Calculated next time", common.LogTimeToken, t.next.Format(time.Stamp))
-		time.Sleep(time.Until(t.next))
+		time.Sleep(t.next.Sub(time.Now().In(t.timezone)))
 		t.logger.Debug("Triggering due to time", common.LogTimeToken, t.next.Format(time.Stamp))
 		t.triggered <- true
 		t.next = t.getNextTriggerTime()
