@@ -53,11 +53,14 @@ func (i *InfluxStorage) State(deviceID string, deviceData map[string]interface{}
 }
 
 // History returns state history records.
+//noinspection GoUnhandledErrorResult
 func (i *InfluxStorage) History(deviceID string, hrs int) map[string]map[int64]interface{} {
 	c, err := i.getClient()
 	if err != nil {
 		return nil
 	}
+
+	defer c.Close()
 
 	q := client.NewQuery(
 		fmt.Sprintf( // nolint: gosec
@@ -138,10 +141,10 @@ func (i *InfluxStorage) checkAndSave() {
 	err = c.Write(bps)
 	if err != nil {
 		i.logger.Error("Failed to store influx data", err)
-	} else {
-		i.logger.Debug("Finished influx transaction")
+		return
 	}
 
+	i.logger.Debug("Finished influx transaction")
 	i.points = make([]*client.Point, 0)
 }
 

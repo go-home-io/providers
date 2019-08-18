@@ -9,3 +9,5 @@ require (
 )
 
 replace go-home.io/x/server/plugins => ../../../server/plugins
+
+go 1.13

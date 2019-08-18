@@ -1,8 +1,6 @@
 package main
 
 import (
-	"sync"
-
 	"github.com/pkg/errors"
 	"go-home.io/x/server/plugins/logger"
 	"go.uber.org/zap"
@@ -11,9 +9,10 @@ import (
 
 // ZapLogger describes ZAP logger implementation.
 type ZapLogger struct {
-	sync.Mutex
-	logger   *zap.Logger
-	Settings *Settings
+	logger     *zap.Logger
+	Settings   *Settings
+	hasHistory bool
+	core       IHistoryCore
 }
 
 // Init performs initial logger setup.
@@ -37,7 +36,7 @@ func (l *ZapLogger) Init(data *logger.InitDataLogger) error {
 			Initial:    100,
 			Thereafter: 100,
 		},
-		Encoding: "json",
+		Encoding: "console",
 		EncoderConfig: zapcore.EncoderConfig{
 			TimeKey:        "ts",
 			LevelKey:       "level",
@@ -51,65 +50,81 @@ func (l *ZapLogger) Init(data *logger.InitDataLogger) error {
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
-		OutputPaths:      l.Settings.Targets.Regular,
-		ErrorOutputPaths: l.Settings.Targets.Error,
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
 	}
 
-	z, err := zConfig.Build(zap.AddCallerSkip(data.SkipLevel),
-		zap.AddStacktrace(zap.ErrorLevel))
+	options := []zap.Option{
+		zap.AddCallerSkip(data.SkipLevel),
+		zap.AddStacktrace(zap.ErrorLevel),
+	}
+
+	switch l.Settings.targetCore {
+	case influxDB:
+		l.hasHistory = true
+		core := newInfluxCore(logLevel, l.Settings.Influx)
+		options = append(options, zap.WrapCore(func(zapcore.Core) zapcore.Core {
+			return core
+		}))
+		l.core = core
+	case console:
+		l.hasHistory = false
+	}
+
+	z, err := zConfig.Build(options...)
 	if err != nil {
 		return errors.Wrap(err, "zap build failed")
 	}
+
 	l.logger = z
 	return nil
+}
+
+// GetSpecs returns logger specifications.
+func (l *ZapLogger) GetSpecs() *logger.LogSpecs {
+	return &logger.LogSpecs{
+		IsHistorySupported: l.hasHistory,
+	}
+}
+
+// Query requests log history.
+func (l *ZapLogger) Query(r *logger.LogHistoryRequest) []*logger.LogHistoryEntry {
+	if !l.hasHistory {
+		return nil
+	}
+
+	return l.core.Query(r)
 }
 
 // Debug outputs debug level message.
 func (l *ZapLogger) Debug(msg string, fields ...string) {
 	params := convertParams(fields...)
-	l.Lock()
-	defer l.Unlock()
 	l.logger.Debug(msg, params...)
 }
 
 // Info outputs info level message.
 func (l *ZapLogger) Info(msg string, fields ...string) {
 	params := convertParams(fields...)
-	l.Lock()
-	defer l.Unlock()
 	l.logger.Info(msg, params...)
 }
 
 // Warn outputs warning level message.
 func (l *ZapLogger) Warn(msg string, fields ...string) {
 	params := convertParams(fields...)
-	l.Lock()
-	defer l.Unlock()
 	l.logger.Warn(msg, params...)
 }
 
 // Error outputs error level message.
 func (l *ZapLogger) Error(msg string, fields ...string) {
 	params := convertParams(fields...)
-	l.Lock()
-	defer l.Unlock()
 	l.logger.Error(msg, params...)
 }
 
 // Fatal outputs fatal level message end performs os.Exit(1).
 func (l *ZapLogger) Fatal(msg string, fields ...string) {
 	params := convertParams(fields...)
-	l.Lock()
-	defer l.Unlock()
 	defer l.logger.Sync()
 	l.logger.Fatal(msg, params...)
-}
-
-// Flush performs logger buffer flush if any.
-func (l *ZapLogger) Flush() {
-	l.Lock()
-	defer l.Unlock()
-	l.logger.Sync() // nolint: gosec
 }
 
 // Converts input string params into zap.Fields.
