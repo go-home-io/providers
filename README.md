@@ -1,4 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-home-io/providers)](https://goreportcard.com/report/github.com/go-home-io/providers)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgo-home-io%2Fproviders.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgo-home-io%2Fproviders?ref=badge_shield)
 
 | Architecture | Bintray Download |
 |--------------|:----------------:|
@@ -9,3 +10,6 @@
 [go-home](https://go-home.io) providers.
 
 Please use [main repo](https://github.com/go-home-io/server) to build and run.
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgo-home-io%2Fproviders.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgo-home-io%2Fproviders?ref=badge_large)
