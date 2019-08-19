@@ -51,6 +51,7 @@ func (d *discoverUPNP) Start() error {
 
 	var joined []string
 	for _, v := range interfaces {
+		v := v
 		if v.Flags&net.FlagMulticast == 0 {
 			continue
 		}
@@ -77,7 +78,7 @@ func (d *discoverUPNP) Start() error {
 
 // Stop stops running UPNP server.
 func (d *discoverUPNP) Stop() {
-	d.connection.Close() // nolint: gosec
+	d.connection.Close() // nolint: gosec, errcheck
 }
 
 // Waits for incoming UDP messages.
@@ -115,7 +116,7 @@ func (d *discoverUPNP) discoveryRespond(addr *net.UDPAddr) {
 		d.logger.Error("Discovery respond error", err)
 		return
 	}
-	defer c.Close()
+	defer c.Close() // nolint: errcheck
 
 	url := fmt.Sprintf("http://%s/upnp/setup.xml", d.advAddress)
 

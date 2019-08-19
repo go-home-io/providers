@@ -32,7 +32,7 @@ func (i *InfluxStorage) Init(data *storage.InitDataStorage) error {
 		return errors.Wrap(err, "get client failed")
 	}
 
-	defer c.Close()
+	defer c.Close() // nolint: errcheck
 	return nil
 }
 
@@ -60,7 +60,7 @@ func (i *InfluxStorage) History(deviceID string, hrs int) map[string]map[int64]i
 		return nil
 	}
 
-	defer c.Close()
+	defer c.Close() // nolint: errcheck
 
 	q := client.NewQuery(
 		fmt.Sprintf( // nolint: gosec
@@ -126,7 +126,7 @@ func (i *InfluxStorage) checkAndSave() {
 		return
 	}
 
-	defer c.Close()
+	defer c.Close() // nolint: errcheck
 
 	bps, err := client.NewBatchPoints(client.BatchPointsConfig{
 		Database: i.Settings.Database,
@@ -174,7 +174,7 @@ func (i *InfluxStorage) parseInfluxResponse(r *client.Response, deviceID string)
 					continue
 				}
 
-				t = t / 1000
+				t /= 1000
 				for ii := 0; ii < columnsLen; ii++ {
 					if ii == timeColumn || nil == val[ii] {
 						continue

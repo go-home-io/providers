@@ -19,7 +19,6 @@ type influxCore struct {
 	sync.Mutex
 
 	zapcore.LevelEnabler
-	client   *client.Client
 	settings *InfluxSettings
 
 	points []*client.Point
@@ -120,7 +119,7 @@ func (i *influxCore) performSave() {
 		return
 	}
 
-	defer c.Close()
+	defer c.Close() // nolint: errcheck
 
 	bps, err := client.NewBatchPoints(client.BatchPointsConfig{
 		Database: i.settings.Database,

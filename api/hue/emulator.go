@@ -53,7 +53,7 @@ func (e *HueEmulator) Unload() {
 	close(e.chCommands)
 
 	if !e.isMaster {
-		e.listener.Close() // nolint: gosec
+		e.listener.Close() // nolint: gosec, errcheck
 		e.upnp.Stop()
 	}
 }

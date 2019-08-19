@@ -5,7 +5,7 @@ import (
 
 	"github.com/koron/go-dproxy"
 	"github.com/pkg/errors"
-	"github.com/sndnvaps/yahoo_weather_api"
+	yahoo "github.com/sndnvaps/yahoo_weather_api"
 	"go-home.io/x/server/plugins/common"
 	"go-home.io/x/server/plugins/device"
 	"go-home.io/x/server/plugins/device/enums"

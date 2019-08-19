@@ -136,7 +136,7 @@ func (h *HueHub) internalUpdates() {
 		for _, v := range h.lights {
 			if v.InternalID == id {
 				v.performActualUpdate(false)
-				break // nolint: megacheck_provider
+				break
 			}
 		}
 	}

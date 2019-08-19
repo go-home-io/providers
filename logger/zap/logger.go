@@ -123,20 +123,20 @@ func (l *ZapLogger) Error(msg string, fields ...string) {
 // Fatal outputs fatal level message end performs os.Exit(1).
 func (l *ZapLogger) Fatal(msg string, fields ...string) {
 	params := convertParams(fields...)
-	defer l.logger.Sync()
+	defer l.logger.Sync() // nolint: errcheck
 	l.logger.Fatal(msg, params...)
 }
 
 // Converts input string params into zap.Fields.
 func convertParams(fields ...string) []zap.Field {
 	fLen := len(fields)
-	result := make([]zap.Field, int(fLen/2))
+	result := make([]zap.Field, fLen/2)
 	for ii := 0; ii < fLen; ii += 2 {
 		if ii+1 >= fLen {
 			break
 		}
 
-		result[int(ii/2)] = zap.String(fields[ii], fields[ii+1])
+		result[ii/2] = zap.String(fields[ii], fields[ii+1])
 	}
 
 	return result

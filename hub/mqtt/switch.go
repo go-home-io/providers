@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/eclipse/paho.mqtt.golang"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/pkg/errors"
 	"go-home.io/x/server/plugins/common"
 	"go-home.io/x/server/plugins/device"

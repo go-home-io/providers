@@ -224,9 +224,9 @@ func (h *HueLight) changeBrightnessOverTime(percent device.GradualBrightness) {
 
 	var currentValue uint8
 	if h.IsGroup {
-		currentValue = uint8(h.Group.State.Bri)
+		currentValue = h.Group.State.Bri
 	} else {
-		currentValue = uint8(h.Light.State.Bri)
+		currentValue = h.Light.State.Bri
 	}
 
 	step := (float32(desiredValue) - float32(currentValue)) /
@@ -239,9 +239,9 @@ func (h *HueLight) changeBrightnessOverTime(percent device.GradualBrightness) {
 			nextVal := uint8(float32(currentValue) + step*float32(ii+1))
 			if nextVal != curVal {
 				if h.IsGroup {
-					h.Group.Bri(nextVal) // nolint: gosec
+					h.Group.Bri(nextVal) // nolint: gosec, errcheck
 				} else {
-					h.Light.Bri(nextVal) // nolint: gosec
+					h.Light.Bri(nextVal) // nolint: gosec, errcheck
 				}
 			}
 

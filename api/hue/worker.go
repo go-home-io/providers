@@ -131,7 +131,7 @@ func (e *HueEmulator) getDeviceInfo(w http.ResponseWriter, _ *http.Request, para
 // Updates device state API. Sends command message to master.
 //noinspection GoUnhandledErrorResult
 func (e *HueEmulator) setDeviceState(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	defer r.Body.Close()
+	defer r.Body.Close() // nolint: errcheck
 	req := &StateCmd{}
 	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
@@ -193,7 +193,7 @@ func (e *HueEmulator) sendJSON(w http.ResponseWriter, val interface{}) {
 		e.logger.Error("Failed to respond", err)
 		return
 	}
-	w.Write(buf.Bytes()) // nolint: gosec
+	w.Write(buf.Bytes()) // nolint: gosec, errcheck
 }
 
 // Wraps internal device state into HUE format.

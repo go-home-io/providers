@@ -8,7 +8,7 @@ import (
 
 // Transforms device-specific property into ON/OFF status.
 func getIsOnDeviceSpecific(internal *DeviceUpdateMessage) bool {
-	switch internal.DeviceType {
+	switch internal.DeviceType { // nolint: gocritic
 	case enums.DevVacuum:
 		st, ok := internal.State[enums.PropVacStatus]
 		if !ok {
@@ -23,7 +23,7 @@ func getIsOnDeviceSpecific(internal *DeviceUpdateMessage) bool {
 
 // Transforms device-specific property into Brightness status.
 func getBrightnessDeviceSpecific(internal *DeviceUpdateMessage) uint8 {
-	switch internal.DeviceType {
+	switch internal.DeviceType { // nolint: gocritic
 	case enums.DevVacuum:
 		fan, ok := internal.State[enums.PropFanSpeed]
 		if !ok {

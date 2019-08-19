@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/ericchiang/k8s"
-	"github.com/ericchiang/k8s/apis/core/v1"
+	v1 "github.com/ericchiang/k8s/apis/core/v1"
 	"github.com/pkg/errors"
 	"go-home.io/x/server/plugins/common"
 	"go-home.io/x/server/plugins/config"

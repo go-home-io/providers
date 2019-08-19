@@ -19,12 +19,12 @@ func rgb2cie(color common.Color) (float32, float32) {
 	X := x / (x + y + z)
 	Y := y / (x + y + z)
 
-	return float32(X), float32(Y)
+	return X, Y
 }
 
 // Magic numbers around HUE implementation, while converting RGB into CIE.
 func rgb2cieMagic(c uint8) float32 {
-	correctedValue := float32(float32(c) / float32(brightnessMax))
+	correctedValue := float32(c) / float32(brightnessMax)
 
 	if correctedValue > 0.04045 {
 		return float32(math.Pow((float64(correctedValue)+0.055)/(1.0+0.055), 2.4))
@@ -58,17 +58,17 @@ func cie2rgb(x float32, y float32, brightness float32) common.Color {
 	g := -X*0.5217933 + Y*1.4472381 + Z*0.0677227
 	b := X*0.0349342 - Y*0.0968930 + Z*1.2884099
 
-	if r > b && r > g && r > 1.0 {
-		g = g / r
-		b = b / r
+	if r > b && r > g && r > 1.0 { // nolint: gocritic
+		g /= r
+		b /= r
 		r = 1.0
 	} else if g > b && g > r && g > 1.0 {
-		r = r / g
-		b = b / g
+		r /= g
+		b /= g
 		g = 1.0
 	} else if b > r && b > g && b > 1.0 {
-		r = r / b
-		g = g / b
+		r /= b
+		g /= b
 		b = 1.0
 	}
 

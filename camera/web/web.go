@@ -8,7 +8,7 @@ import (
 	errs "github.com/bdlm/errors"
 	"github.com/bdlm/log"
 	"github.com/mkenney/go-chrome/codes"
-	"github.com/mkenney/go-chrome/tot"
+	chrome "github.com/mkenney/go-chrome/tot"
 	"github.com/mkenney/go-chrome/tot/emulation"
 	"github.com/mkenney/go-chrome/tot/page"
 	"github.com/pkg/errors"
@@ -113,7 +113,7 @@ func (c *WebCamera) reloadTab() {
 		select {
 		case <-tick:
 			c.closeTab()
-			c.openTab() // nolint: gosec
+			c.openTab() // nolint: gosec, errcheck
 		case <-c.stopChan:
 			return
 		}
@@ -178,7 +178,7 @@ func (c *WebCamera) handleTabErrors() {
 		if !ok || e.Code() == codes.SocketPanic {
 			c.tab = nil
 			c.Logger.Warn("Chrome communication error", common.LogURLToken, c.Settings.Address)
-			c.openTab() // nolint: gosec
+			c.openTab() // nolint: gosec, errcheck
 			return
 		}
 	case <-c.stopErrorsChan:
@@ -207,7 +207,7 @@ func (c *WebCamera) closeTab() {
 //noinspection GoUnhandledErrorResult
 func (c *WebCamera) getPicture() error {
 	if nil == c.tab {
-		go c.openTab()
+		go c.openTab() // nolint: errcheck
 		return errors.New("tab is currently closed")
 	}
 
