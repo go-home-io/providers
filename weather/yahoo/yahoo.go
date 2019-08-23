@@ -3,9 +3,7 @@ package main
 import (
 	"strings"
 
-	"github.com/koron/go-dproxy"
-	"github.com/pkg/errors"
-	yahoo "github.com/sndnvaps/yahoo_weather_api"
+	yahoo "github.com/vkorn/go-yahoo-weather"
 	"go-home.io/x/server/plugins/common"
 	"go-home.io/x/server/plugins/device"
 	"go-home.io/x/server/plugins/device/enums"
@@ -16,20 +14,18 @@ import (
 type YahooWeather struct {
 	Settings *Settings
 
-	state  *device.WeatherState
-	logger common.ILoggerProvider
-	uom    enums.UOM
+	provider *yahoo.YahooWeatherProvider
+	state    *device.WeatherState
+	logger   common.ILoggerProvider
+	uom      enums.UOM
 }
 
 // Init starts weather device.
 func (w *YahooWeather) Init(data *device.InitDataDevice) error {
 	w.logger = data.Logger
 	w.uom = data.UOM
-
-	_, err := w.getProxy()
-	if err != nil {
-		return errors.Wrap(err, "get proxy failed")
-	}
+	w.provider = yahoo.NewProvider(w.Settings.AppID, w.Settings.ClientID, w.Settings.ClientSecret)
+	yahoo.MinUpdateTimeoutSeconds = int64(w.Settings.PollingInterval*60 - 30)
 
 	return nil
 }
@@ -64,75 +60,30 @@ func (w *YahooWeather) Load() (*device.WeatherState, error) {
 
 // Update pulls updates from yahoo weather.
 func (w *YahooWeather) Update() (st *device.WeatherState, e error) {
-	proxy, err := w.getProxy()
+
+	w.logger.Debug("Pulling weather data from Yahoo")
+
+	data, err := w.provider.Query(w.Settings.Location, yahoo.Imperial)
 	if err != nil {
-		return nil, errors.Wrap(err, "get proxy failed")
-	}
-
-	w.state = &device.WeatherState{}
-
-	defer func() {
-		if r := recover(); r != nil {
-			st = nil
-			e = errors.New("failed to call Yahoo API")
-			w.logger.Error("Yahoo weather not responding", e)
-		}
-	}()
-
-	uom := yahoo.GetUnits(proxy)
-	w.logger.Debug("Pulls atmosphere data from Yahoo weather")
-	a := yahoo.GetAtmosphere(proxy)
-
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropHumidity) {
-		w.state.Humidity = a.Humidity
-	}
-
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropPressure) {
-		// Yahoo always reports pressure in mb.
-		w.state.Pressure = helpers.UOMConvert(a.Pressure, enums.PropPressure, enums.UOMMetric, w.uom)
-	}
-
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropVisibility) {
-		w.state.Visibility = helpers.UOMConvertString(a.Visibility, enums.PropVisibility, uom.Distance, w.uom)
-	}
-
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropTemperature) {
-		w.logger.Debug("Pulls temperature from Yahoo weather")
-		c := yahoo.GetConditions(proxy)
-		w.state.Temperature = helpers.UOMConvertString(c.Temp, enums.PropTemperature, uom.Temperature, w.uom)
-	}
-
-	w.logger.Debug("Pulls astronomy data from Yahoo weather")
-	as := yahoo.GetAstronomy(proxy)
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropSunset) {
-		w.state.Sunset = as.Sunset
-	}
-
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropSunrise) {
-		w.state.Sunrise = as.Sunrise
-	}
-
-	w.logger.Debug("Pulls wind data from Yahoo weather")
-	wi := yahoo.GetWindInfo(proxy)
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropWindDirection) {
-		w.state.WindDirection = wi.Direction
-	}
-
-	if enums.SliceContainsProperty(w.Settings.Properties, enums.PropWindSpeed) {
-		w.state.WindSpeed = helpers.UOMConvertString(wi.Speed, enums.PropWindSpeed, uom.Speed, w.uom)
-	}
-
-	return w.state, nil
-}
-
-// Returns object proxy.
-func (w *YahooWeather) getProxy() (dproxy.Proxy, error) {
-	proxy := yahoo.GetChannelNode(w.Settings.Location)
-	if nil == proxy {
-		err := errors.New("failed to load location")
-		w.logger.Error("Failed to load yahoo location", err)
+		w.logger.Error("Failed to query Yahoo weather", err)
 		return nil, err
 	}
 
-	return proxy, nil
+	w.state = &device.WeatherState{
+		Humidity: helpers.UOMConvert(float64(data.Observation.Atmosphere.Humidity),
+			enums.PropHumidity, enums.UOMImperial, w.uom),
+		Pressure: helpers.UOMConvert(float64(data.Observation.Atmosphere.Pressure),
+			enums.PropPressure, enums.UOMImperial, w.uom),
+		Visibility: helpers.UOMConvert(float64(data.Observation.Atmosphere.Visibility),
+			enums.PropVisibility, enums.UOMImperial, w.uom),
+		WindDirection: float64(data.Observation.Wind.Direction),
+		WindSpeed:     float64(data.Observation.Wind.Speed),
+		Temperature: helpers.UOMConvert(float64(data.Observation.Condition.Temperature),
+			enums.PropTemperature, enums.UOMImperial, w.uom),
+		Sunrise:     data.Observation.Astronomy.Sunrise,
+		Sunset:      data.Observation.Astronomy.Sunset,
+		Description: data.Observation.Condition.Text,
+	}
+
+	return w.state, nil
 }

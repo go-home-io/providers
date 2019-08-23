@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/pkg/errors"
+	"go-home.io/x/server/plugins/common"
 	"go-home.io/x/server/plugins/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -63,6 +64,10 @@ func (l *ZapLogger) Init(data *logger.InitDataLogger) error {
 	case influxDB:
 		l.hasHistory = true
 		core := newInfluxCore(logLevel, l.Settings.Influx)
+		err := core.CreateDatabase()
+		if err != nil {
+			return errors.Wrap(err, "failed to provision logs database")
+		}
 		options = append(options, zap.WrapCore(func(zapcore.Core) zapcore.Core {
 			return core
 		}))
@@ -81,14 +86,14 @@ func (l *ZapLogger) Init(data *logger.InitDataLogger) error {
 }
 
 // GetSpecs returns logger specifications.
-func (l *ZapLogger) GetSpecs() *logger.LogSpecs {
-	return &logger.LogSpecs{
+func (l *ZapLogger) GetSpecs() *common.LogSpecs {
+	return &common.LogSpecs{
 		IsHistorySupported: l.hasHistory,
 	}
 }
 
 // Query requests log history.
-func (l *ZapLogger) Query(r *logger.LogHistoryRequest) []*logger.LogHistoryEntry {
+func (l *ZapLogger) Query(r *common.LogHistoryRequest) []*common.LogHistoryEntry {
 	if !l.hasHistory {
 		return nil
 	}

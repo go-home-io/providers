@@ -1,8 +1,10 @@
 package main
 
-import "go-home.io/x/server/plugins/logger"
+import (
+	"go-home.io/x/server/plugins/common"
+)
 
 // IHistoryCore defines zap core with history support.
 type IHistoryCore interface {
-	Query(*logger.LogHistoryRequest) []*logger.LogHistoryEntry
+	Query(*common.LogHistoryRequest) []*common.LogHistoryEntry
 }

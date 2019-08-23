@@ -33,7 +33,16 @@ func (i *InfluxStorage) Init(data *storage.InitDataStorage) error {
 	}
 
 	defer c.Close() // nolint: errcheck
-	return nil
+
+	r, err := c.Query(client.NewQuery(
+		fmt.Sprintf("CREATE DATABASE %s WITH DURATION %s",
+			i.Settings.Database, i.Settings.Retention), i.Settings.Database, "ns"))
+
+	if err == nil && r.Error() != nil {
+		err = r.Error()
+	}
+
+	return err
 }
 
 // Heartbeat stores heartbeat event from a device.

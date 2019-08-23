@@ -20,6 +20,7 @@ type InfluxSettings struct {
 	Password  string `yaml:"password" validate:"required"`
 	Database  string `yaml:"database" validate:"required"`
 	BatchSize int    `yaml:"batchSize" validate:"gt=0" default:"10"`
+	Retention string `yaml:"retention" default:"7d"`
 }
 
 // Settings describes plugin settings.

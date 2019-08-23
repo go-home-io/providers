@@ -10,6 +10,9 @@ import (
 // Settings has data required to start weather.
 type Settings struct {
 	Location        string           `yaml:"location" validate:"required"`
+	AppID           string           `yaml:"appId" validate:"required"`
+	ClientID        string           `yaml:"clientId" validate:"required"`
+	ClientSecret    string           `yaml:"clientSecret" validate:"required"`
 	Properties      []enums.Property `yaml:"properties"`
 	PollingInterval int              `yaml:"pollingInterval" validate:"gte=10" default:"10"`
 
@@ -39,4 +42,5 @@ func (s *Settings) Validate() error {
 }
 
 var supportedProperties = []enums.Property{enums.PropTemperature, enums.PropSunrise, enums.PropSunset,
-	enums.PropHumidity, enums.PropPressure, enums.PropVisibility, enums.PropWindDirection, enums.PropWindSpeed}
+	enums.PropHumidity, enums.PropPressure, enums.PropVisibility, enums.PropWindDirection, enums.PropWindSpeed,
+	enums.PropDescription}

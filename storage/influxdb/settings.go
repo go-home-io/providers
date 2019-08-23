@@ -9,6 +9,7 @@ type Settings struct {
 	Password  string `yaml:"password" validate:"required"`
 	Database  string `yaml:"database" validate:"required"`
 	BatchSize int    `yaml:"batchSize" validate:"gt=0" default:"10"`
+	Retention string `yaml:"retention" default:"7d"`
 }
 
 // Validate is not used for this plugin.
