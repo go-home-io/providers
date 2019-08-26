@@ -112,6 +112,11 @@ func (h *HueHub) GetSpec() *device.Spec {
 	return h.spec
 }
 
+// Input is not used.
+func (h *HueHub) Input(common.Input) error {
+	return nil
+}
+
 // Pulls hub for a new devices.
 func getNew(devices map[int]*HueLight) []*device.DiscoveredDevices {
 	newDevices := make([]*device.DiscoveredDevices, 0)
@@ -157,7 +162,7 @@ func (h *HueHub) authenticate() error {
 
 	_, err = h.bridge.GetConfig()
 	if err != nil {
-		return errors.New("failed to communicate to HUE hub")
+		return errors.Wrap(err, "failed to communicate to HUE hub")
 	}
 
 	h.logger.Info("Successfully authenticated against HUE hub", common.LogDeviceHostToken, h.bridge.Host)

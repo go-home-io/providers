@@ -65,6 +65,11 @@ func (h *HueLight) GetSpec() *device.Spec {
 	return h.spec
 }
 
+// Input is not used.
+func (h *HueLight) Input(common.Input) error {
+	return nil
+}
+
 // SetBrightness makes an attempt to change device brightness.
 func (h *HueLight) SetBrightness(percent device.GradualBrightness) error {
 	if percent.TransitionSeconds > 0 {

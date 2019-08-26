@@ -217,3 +217,8 @@ func (m *mqttDevice) GetName() string {
 func (m *mqttDevice) GetSpec() *device.Spec {
 	return m.spec
 }
+
+// Input is not used.
+func (m *mqttDevice) Input(common.Input) error {
+	return nil
+}

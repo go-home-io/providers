@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 
+	"go-home.io/x/server/plugins/common"
 	"go-home.io/x/server/plugins/device"
 )
 
@@ -63,4 +64,9 @@ func (d *xiaomiDevice) GetName() string {
 // GetID returns the device ID.
 func (d *xiaomiDevice) GetID() string {
 	return d.deviceID
+}
+
+// Input is not used.
+func (d *xiaomiDevice) Input(common.Input) error {
+	return nil
 }

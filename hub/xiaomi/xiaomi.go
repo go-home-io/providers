@@ -66,6 +66,11 @@ func (h *XiaomiHub) GetSpec() *device.Spec {
 	}
 }
 
+// Input is not used.
+func (h *XiaomiHub) Input(common.Input) error {
+	return nil
+}
+
 // Load performs initial load.
 func (h *XiaomiHub) Load() (*device.HubLoadResult, error) {
 	h.Lock()

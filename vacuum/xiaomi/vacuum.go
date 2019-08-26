@@ -62,6 +62,11 @@ func (v *XiaomiVacuum) GetSpec() *device.Spec {
 	}
 }
 
+// Input is not used.
+func (v *XiaomiVacuum) Input(common.Input) error {
+	return nil
+}
+
 // Load starts vacuum monitoring.
 func (v *XiaomiVacuum) Load() (*device.VacuumState, error) {
 	v.state = &device.VacuumState{

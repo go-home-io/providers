@@ -90,6 +90,11 @@ func (s *BME280Sensor) GetSpec() *device.Spec {
 	}
 }
 
+// Input is not used.
+func (s *BME280Sensor) Input(common.Input) error {
+	return nil
+}
+
 // Load performs plugin initial load.
 func (s *BME280Sensor) Load() (*device.SensorState, error) {
 	s.closeCh = make(chan bool, 1)

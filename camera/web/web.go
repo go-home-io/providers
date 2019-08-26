@@ -85,6 +85,11 @@ func (c *WebCamera) GetSpec() *device.Spec {
 	}
 }
 
+// Input is not used.
+func (c *WebCamera) Input(common.Input) error {
+	return nil
+}
+
 // Load performs initial load.
 func (c *WebCamera) Load() (*device.CameraState, error) {
 	return c.Update()

@@ -81,6 +81,11 @@ func (m *MQTTHub) GetSpec() *device.Spec {
 	return m.spec
 }
 
+// Input is not used.
+func (m *MQTTHub) Input(common.Input) error {
+	return nil
+}
+
 // Load performs initial hub load.
 func (m *MQTTHub) Load() (*device.HubLoadResult, error) {
 	m.devices = make([]interface{}, 0)

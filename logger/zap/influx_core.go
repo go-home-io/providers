@@ -162,7 +162,6 @@ func (i *influxCore) Query(r *common.LogHistoryRequest) []*common.LogHistoryEntr
 	qr, err := c.Query(q)
 
 	if err != nil || qr.Error() != nil {
-		fmt.Println(err.Error())
 		return res
 	}
 

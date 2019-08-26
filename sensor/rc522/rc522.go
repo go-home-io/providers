@@ -86,6 +86,11 @@ func (s *RC522Sensor) GetSpec() *device.Spec {
 	}
 }
 
+// Input is not used.
+func (s *RC522Sensor) Input(common.Input) error {
+	return nil
+}
+
 // Load performs plugin initial load.
 func (s *RC522Sensor) Load() (*device.SensorState, error) {
 	go s.readData()

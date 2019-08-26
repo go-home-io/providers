@@ -53,6 +53,11 @@ func (w *YahooWeather) GetSpec() *device.Spec {
 	}
 }
 
+// Input is not used.
+func (w *YahooWeather) Input(common.Input) error {
+	return nil
+}
+
 // Load performs first update.
 func (w *YahooWeather) Load() (*device.WeatherState, error) {
 	return w.Update()

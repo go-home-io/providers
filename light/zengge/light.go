@@ -52,6 +52,11 @@ func (z *ZenggeLight) GetSpec() *device.Spec {
 	return z.spec
 }
 
+// Input is not used.
+func (z *ZenggeLight) Input(common.Input) error {
+	return nil
+}
+
 // Load performs initial device connection and state pulls.
 func (z *ZenggeLight) Load() (*device.LightState, error) {
 	transport, err := local.NewTransport(fmt.Sprintf("%s:%d", z.Settings.LightIP, devicePort))
