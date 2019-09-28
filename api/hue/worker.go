@@ -142,7 +142,6 @@ func (e *HueEmulator) setDeviceState(w http.ResponseWriter, r *http.Request, par
 	lightID := params.ByName("lightID")
 	for _, v := range e.devices {
 		if lightID == v.internalHash {
-
 			e.logger.Debug("Requested device command", common.LogIDToken, v.DeviceID)
 			if req.On != nil {
 				cmd := enums.CmdOn

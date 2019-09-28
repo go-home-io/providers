@@ -65,7 +65,6 @@ func (w *YahooWeather) Load() (*device.WeatherState, error) {
 
 // Update pulls updates from yahoo weather.
 func (w *YahooWeather) Update() (st *device.WeatherState, e error) {
-
 	w.logger.Debug("Pulling weather data from Yahoo")
 
 	data, err := w.provider.Query(w.Settings.Location, yahoo.Imperial)

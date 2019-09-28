@@ -209,7 +209,6 @@ func (h *HueLight) SetColor(color common.Color) error {
 	x, y := rgb2cie(color)
 	if h.IsGroup {
 		err = h.Group.Xy([]float32{x, y})
-
 	} else {
 		err = h.Light.Xy([]float32{x, y})
 	}
@@ -265,7 +264,6 @@ func (h *HueLight) changeBrightnessOverTime(percent device.GradualBrightness) {
 		}
 
 		h.performActualUpdate(false)
-
 	}()
 }
 
@@ -325,7 +323,6 @@ func (h *HueLight) pickScenes() []string {
 	scenes := make([]string, 0)
 	for _, v := range h.sharedObjects.scenes {
 		if helpers.SliceEqualsString(v.Scene.Lights, h.Group.Lights) {
-
 			originalName := v.Scene.Name
 			finalName := originalName
 			for ii := 1; ii <= 10; ii++ {
