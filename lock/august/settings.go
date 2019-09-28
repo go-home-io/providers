@@ -12,7 +12,7 @@ const (
 	// User's input key name.
 	inputKeyName = "code"
 	// Log key name.
-	lockIdLogKeyName = "lock_id"
+	lockIDLogKeyName = "lock_id"
 )
 
 // Settings describes plugin settings.

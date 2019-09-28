@@ -315,7 +315,7 @@ func (a *AugustLock) findLock() error {
 
 	for _, v := range locks {
 		a.logger.Info(fmt.Sprintf("Found available August lock: %s", v.Name),
-			common.LogUserNameToken, a.Settings.Username, lockIdLogKeyName, v.ID)
+			common.LogUserNameToken, a.Settings.Username, lockIDLogKeyName, v.ID)
 	}
 
 	if "" == a.Settings.LockID {
@@ -333,7 +333,7 @@ func (a *AugustLock) findLock() error {
 	}
 
 	a.logger.Warn("Lock wasn't found", common.LogUserNameToken, a.Settings.Username,
-		lockIdLogKeyName, a.Settings.LockID)
+		lockIDLogKeyName, a.Settings.LockID)
 	return errors.New("no locks found")
 }
 
