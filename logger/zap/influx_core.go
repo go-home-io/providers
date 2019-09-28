@@ -56,7 +56,7 @@ func (i *influxCore) CreateDatabase() error {
 	defer c.Close() // nolint: errcheck
 
 	r, err := c.Query(client.NewQuery(
-		fmt.Sprintf("CREATE DATABASE %s WITH DURATION %s",
+		fmt.Sprintf("CREATE DATABASE %s WITH SHARD DURATION %s",
 			i.settings.Database, i.settings.Retention), i.settings.Database, "ns"))
 
 	if err == nil && r.Error() != nil {
